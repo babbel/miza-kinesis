@@ -1,0 +1,7 @@
+# Ignore code coverage report
+coverage
+
+# Ignore node modules
+node_modules
+.npmrc
+npm-debug.log
