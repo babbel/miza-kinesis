@@ -6,6 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1.0.0
-      - uses: datreeio/validate-license-action@v1.0.0
+      - uses: cdssnc/node-license-checker-github-action
         with:
           args: MIT,ISC,MPL-2.0
