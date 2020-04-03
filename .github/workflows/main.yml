@@ -1,0 +1,11 @@
+name: Validate licenses
+on: [push, pull_request]
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1.0.0
+      - uses: datreeio/validate-license-action@v1.0.0
+        with:
+          args: MIT,ISC,MPL-2.0
