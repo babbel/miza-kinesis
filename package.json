@@ -1,6 +1,6 @@
 {
   "name": "miza-kinesis",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Library to emit Events to Kinesis Events Queue",
   "main": "index.js",
   "engines": {
