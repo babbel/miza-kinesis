@@ -1,4 +1,4 @@
-name: emarsys-sdk.js CI - build and publish
+name: miza-kinesis - build
 
 on: [push]
 
@@ -7,6 +7,7 @@ env:
 
 jobs:
   build:
+    name: build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -17,9 +18,7 @@ jobs:
     - name: Install dependencies and test
       run: |
         npm ci
+        npm run lint
         npm run test
     - name: build 
       run: npm run build
-    - name: publish to npm
-      if: github.ref == 'refs/heads/master'
-      run: npm publish
