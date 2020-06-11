@@ -1,4 +1,4 @@
-name: miza-kinesis - build
+name: miza-kinesis - build and publish
 
 on: [push]
 
@@ -15,6 +15,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.NODE_VERSION }}
+        registry-url: 'https://registry.npmjs.org'
     - name: Install dependencies and test
       run: |
         npm ci
@@ -22,3 +23,8 @@ jobs:
         npm run test
     - name: build 
       run: npm run build
+    - name: Publish to npm
+      if: github.ref == 'refs/heads/master'
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
