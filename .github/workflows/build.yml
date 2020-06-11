@@ -1,0 +1,30 @@
+name: miza-kinesis - build and publish
+
+on: [push]
+
+env:
+  NODE_VERSION: '12.13'
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        registry-url: 'https://registry.npmjs.org'
+    - name: Install dependencies and test
+      run: |
+        npm ci
+        npm run lint
+        npm run test
+    - name: build 
+      run: npm run build
+    - name: Publish to npm
+      if: github.ref == 'refs/heads/master'
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
