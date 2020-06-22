@@ -4,8 +4,8 @@
   "description": "Library to emit Events to Kinesis Events Queue",
   "main": "index.js",
   "engines": {
-    "node": "12.14",
-    "npm": "6.13"
+    "node": ">=12.14",
+    "npm": ">=6.13"
   },
   "scripts": {
     "lint": "eslint . --ignore-path .gitignore",
