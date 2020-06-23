@@ -9,8 +9,8 @@
   },
   "scripts": {
     "lint": "eslint . --ignore-path .gitignore",
-    "test": "NODE_ENV=test mocha test",
-    "test:coverage": "NODE_ENV=test nyc --reporter=lcov _mocha test",
+    "test": "NODE_ENV=test mocha test --config=test/.mocharc.json",
+    "test:coverage": "NODE_ENV=test nyc --reporter=lcov _mocha test --config=test/.mocharc.json",
     "build": "rm -rf node_modules && npm install --production"
   },
   "dependencies": {
