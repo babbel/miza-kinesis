@@ -1,5 +1,5 @@
 {
-  "name": "miza-kinesis",
+  "name": "@babbel/miza-kinesis",
   "version": "1.0.4",
   "description": "Library to emit Events to Kinesis Events Queue",
   "main": "index.js",
@@ -29,7 +29,11 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/babbel/miza-kinesis.git"
+    "url": "git+https://github.com/babbel/miza-kinesis.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/babbel/miza-kinesis/issues"
+  },
+  "homepage": "https://github.com/babbel/miza-kinesis#readme"
 }
