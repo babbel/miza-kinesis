@@ -32,7 +32,7 @@ npm test
 To track events:
 
 ```js
-const events = require('miza-kinesis');
+const events = require('@babbel/miza-kinesis');
 
 const config = {
   appName: 'application-name',
