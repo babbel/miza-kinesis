@@ -1,4 +1,4 @@
-const { omit } = require('lodash');
+const omit = require('lodash.omit');
 const AWS = require('aws-sdk');
 
 const HASH_RESULT = 'NEW HASH FOR THE EVENT';

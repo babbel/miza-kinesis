@@ -1,6 +1,6 @@
 {
   "name": "@babbel/miza-kinesis",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Library to emit Events to Kinesis Events Queue",
   "main": "index.js",
   "engines": {
@@ -14,12 +14,13 @@
     "build": "rm -rf node_modules && npm install --production"
   },
   "dependencies": {
-    "aws-sdk": "^2.702.0"
+    "aws-sdk": "^2.716.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-exclude": "^2.0.2",
-    "eslint": "^7.3.1",
+    "eslint": "^7.5.0",
+    "lodash.omit": "^4.5.0",
     "mocha": "^8.0.1",
     "nyc": "^15.1.0",
     "proxyquire": "^2.1.3",
