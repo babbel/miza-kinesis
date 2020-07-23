@@ -3,7 +3,7 @@ name: miza-kinesis - build and publish
 on: [push]
 
 env:
-  NODE_VERSION: '12.13'
+  NODE_VERSION: '12.14'
 
 jobs:
   test:
