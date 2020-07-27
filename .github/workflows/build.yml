@@ -3,29 +3,49 @@ name: miza-kinesis - build and publish
 on: [push]
 
 env:
-  NODE_VERSION: '12.13'
+  NODE_VERSION: '12.14'
 
 jobs:
-  build:
-    name: build
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - '10'
+          - '12.13'
+          - '14'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies and test
+        run: npm ci
+      - name: Linters
+        run: npm run lint
+      - name: Tests
+        run: npm run test
+
+  release:
+    needs: test
+    if: contains(github.ref, 'tags') && github.event_name == 'create'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        registry-url: 'https://registry.npmjs.org'
-    - name: Install dependencies and test
-      run: |
-        npm ci
-        npm run lint
-        npm run test
-    - name: build 
-      run: npm run build
-    - name: Publish to npm
-      if: github.ref == 'refs/heads/master'
-      run: npm publish --access public
-      env:
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_USER_ACCESS_TOKEN }}
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_USER_ACCESS_TOKEN }}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Build npm package
+        run: npm run build
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_USER_ACCESS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_USER_ACCESS_TOKEN }}
