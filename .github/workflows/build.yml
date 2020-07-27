@@ -31,7 +31,7 @@ jobs:
 
   release:
     needs: test
-    if: github.ref == 'refs/heads/master'
+    if: contains(github.ref, 'tags') && github.event_name == 'create'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
