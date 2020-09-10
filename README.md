@@ -13,7 +13,7 @@ Requirements
 Install dependencies:
 
 ```bash
-npm install
+npm install @babbel/miza-kinesis --save
 ```
 
 ## Build
