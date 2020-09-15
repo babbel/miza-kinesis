@@ -9,5 +9,9 @@
   },
   "rules": {
     "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }]
-  }
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "parser": "@typescript-eslint/parser"
 }
