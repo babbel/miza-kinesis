@@ -75,7 +75,7 @@ Config has a following format:
 
 In order to create a release:
 
-1. Add details about changes in `CHANELOG.md`
+1. Add details about changes in `CHANGELOG.md`
 1. Manual version update:
   1. Update the version in `package.json` of your feature branch
   1. Tag the last commit with the new version
