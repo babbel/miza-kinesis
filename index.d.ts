@@ -3,7 +3,7 @@
 
 export = Events;
 
-declare function Events(config: Events.Config): Events.emitEvent;
+declare function Events(config: Events.Config): Events.EmitEvent;
 
 declare namespace Events {
   interface Config {
@@ -22,5 +22,7 @@ declare namespace Events {
     [key: string]: unknown; // dependent on the specific event schema
   }
 
-  type emitEvent = (event: EventSchema) => AWS.Request<AWS.Kinesis.Types.PutRecordOutput, AWS.AWSError>;
+  type EmitEvent = (event: EventSchema) => ReturnType<
+    AWS.Request<AWS.Kinesis.Types.PutRecordOutput, AWS.AWSError>['promise']
+  >;
 }
