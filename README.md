@@ -73,12 +73,16 @@ Config has a following format:
 
 ## Releasing new versions
 
-In order to create a release, manully update the version in `package.json` of your feature branch.
-You can also use [`npm version`](https://docs.npmjs.com/cli/version) to do so.
+In order to create a release:
 
-Add details about changes in `Changelog.md`.
-
-New versions are automatically published to Gemfury on every merge to `master`.
+1. Update the version in `package.json` of your feature branch
+    1. You can also use [`npm version`](https://docs.npmjs.com/cli/version) to do so
+1. Add details about changes in `Changelog.md`
+1. Tag the last commit with the new version
+    1. `git tag v1.x.x`
+    1. `git push origin v1.x.x`
+1. Merge to master!
+    1. New versions are automatically published to Gemfury on every merge to `master`
 
 ## License
 
