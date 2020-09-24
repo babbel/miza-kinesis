@@ -1,6 +1,6 @@
 {
   "name": "@babbel/miza-kinesis",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Library to emit Events to Kinesis Events Queue",
   "main": "index.js",
   "types": "index.d.ts",
