@@ -1,6 +1,6 @@
 name: miza-kinesis - build and publish
 
-on: [push]
+on: [push, create]
 
 env:
   NODE_VERSION: '12.14'
