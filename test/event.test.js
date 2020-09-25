@@ -73,6 +73,70 @@ describe('#emitEvent', () => {
       });
   });
 
+  describe('when calling emitEvent with PartitionKey in config', () => {
+    const event = {
+      data: 'event data'
+    };
+
+    it('calls putRecord on kinesis with the PartitionKey in config', () => {
+      const clock = sinon.useFakeTimers();
+      const config = {
+        appName: 'test-app',
+        partitionKey: 'uuid',
+        kinesisStream: {
+          resource: 'test-stream'
+        }
+      };
+
+      const createdAt = new Date();
+      const enrichedEvent = {
+        created_at: createdAt,
+        data: 'event data',
+        meta:
+        { created_at: createdAt,
+          event_uuid: EVENT_UUID_RESULT,
+          producer: 'test-app' }
+        };
+
+        emitEvent(kinesis, event, config);
+        expect(putRecordStub).to.have.been.calledWith({
+          Data: JSON.stringify(enrichedEvent),
+          PartitionKey: 'uuid',
+          StreamName: 'test-stream'
+        });
+        clock.restore();
+      });
+
+
+      it('calls putRecord on kinesis with event uuid when PartitionKey is undefined', () => {
+        const clock = sinon.useFakeTimers();
+        const config = {
+          appName: 'test-app',
+          kinesisStream: {
+            resource: 'test-stream'
+          }
+        };
+  
+        const createdAt = new Date();
+        const enrichedEvent = {
+          created_at: createdAt,
+          data: 'event data',
+          meta:
+          { created_at: createdAt,
+            event_uuid: EVENT_UUID_RESULT,
+            producer: 'test-app' }
+          };
+  
+          emitEvent(kinesis, event, config);
+          expect(putRecordStub).to.have.been.calledWith({
+            Data: JSON.stringify(enrichedEvent),
+            PartitionKey: EVENT_UUID_RESULT,
+            StreamName: 'test-stream'
+          });
+          clock.restore();
+        });
+  })
+
     describe('when creating a PartitionKey', () => {
       describe('when no identifier is passed', () => {
         const event = { key: 'value' };

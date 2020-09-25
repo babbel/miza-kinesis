@@ -67,6 +67,7 @@ Config has a following format:
 * `kinesisStream.httpOptions` - *optional* specified in AWS SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html
 * `kinesisStream.maxRetries` - **optional** the maximum amount of retries to attempt with a request. See AWS.Kinesis.maxRetries for more information.
 * `endpoint` - **localstack-only** we recommend to run the service in development environment using Localstack. Kinesis (from Localstack) will respond at the location `http://localhost:4568`. In order to work with Kinesis, you need to provide the location(endpoint) to the AWS-sdk configuration.
+* `partitionKey` - **optional** the key used to group data by shard within a stream.
 
 `emitEvent` returns data in following format: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html#putRecord-property
 `event` specification you can check here: https://confluence.internal.babbel.com/wiki/display/PM/Event+Specifications
