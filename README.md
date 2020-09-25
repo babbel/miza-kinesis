@@ -85,7 +85,7 @@ In order to create a release:
     - Automatic version update:
         1. Use [`npm version`](https://docs.npmjs.com/cli/version)
 1. Merge to master!
-    1. New versions are automatically published to Gemfury on every merge to `master`
+    1. New versions are automatically published to npm on every merge to `master`
 
 ## License
 
