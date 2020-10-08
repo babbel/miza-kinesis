@@ -15,6 +15,7 @@ declare namespace Events {
       httpOptions?: AWS.HTTPOptions;
     };
     endpoint?: string;
+    partitionKey?: string;
   }
 
   interface EventSchema {
