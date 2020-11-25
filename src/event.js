@@ -9,7 +9,7 @@ const partitionKey = (event) => (
   newHash(event) // fallback
 );
 
-const enrichMeta = (event, appName, ip) => {
+const enrichMeta = (event, appName, ipv4) => {
   const createdAt = new Date().toISOString();
 
   const enrichedEvent = Object.assign({ created_at: createdAt }, event);
@@ -19,14 +19,14 @@ const enrichMeta = (event, appName, ip) => {
     event_uuid: crypto.randomBytes(16).toString('hex'),
     producer: appName,
     user_agent: 'miza-kinesis',
-    ip
+    ipv4
   }, enrichedEvent.meta);
 
   return enrichedEvent;
 };
 
 module.exports = (kinesis, event, config) => {
-  const enrichedEvent = enrichMeta(event, config.appName, config.ip);
+  const enrichedEvent = enrichMeta(event, config.appName, config.iv4);
 
   const params = {
     Data: JSON.stringify(enrichedEvent),
