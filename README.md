@@ -44,6 +44,7 @@ const config = {
     },
     maxRetries: 10
   },
+  ip: '127.0.0.1',
   endpoint: 'http://localhost:4568' // localstack only
 };
 
