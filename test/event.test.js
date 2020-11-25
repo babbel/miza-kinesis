@@ -56,8 +56,10 @@ describe('#emitEvent', () => {
         meta:
         { created_at: createdAt,
           event_uuid: EVENT_UUID_RESULT,
-          producer: 'some name' }
-        };
+          producer: 'some name',
+          user_agent: 'miza-kinesis'
+        }
+      };
 
         emitEvent(kinesis, event, config);
         expect(putRecordStub).to.have.been.calledWith({
@@ -95,8 +97,10 @@ describe('#emitEvent', () => {
         meta:
         { created_at: createdAt,
           event_uuid: EVENT_UUID_RESULT,
-          producer: 'test-app' }
-        };
+          producer: 'test-app',
+          user_agent: 'miza-kinesis'
+        },
+      };
 
         emitEvent(kinesis, event, config);
         expect(putRecordStub).to.have.been.calledWith({
@@ -124,8 +128,10 @@ describe('#emitEvent', () => {
           meta:
           { created_at: createdAt,
             event_uuid: EVENT_UUID_RESULT,
-            producer: 'test-app' }
-          };
+            producer: 'test-app',
+            user_agent: 'miza-kinesis' 
+          }
+        };
   
           emitEvent(kinesis, event, config);
           expect(putRecordStub).to.have.been.calledWith({
