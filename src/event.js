@@ -26,7 +26,7 @@ const enrichMeta = (event, appName, ipv4) => {
 };
 
 module.exports = (kinesis, event, config) => {
-  const enrichedEvent = enrichMeta(event, config.appName, config.iv4);
+  const enrichedEvent = enrichMeta(event, config.appName, config.ipv4);
 
   const params = {
     Data: JSON.stringify(enrichedEvent),
