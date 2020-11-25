@@ -44,6 +44,7 @@ const config = {
     },
     maxRetries: 10
   },
+  ip: '127.0.0.1', // optional
   endpoint: 'http://localhost:4568' // localstack only
 };
 
@@ -66,6 +67,7 @@ Config has a following format:
 * `kinesisStream.arn` - **required** Kinesis ARN where the events will be send
 * `kinesisStream.httpOptions` - *optional* specified in AWS SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html
 * `kinesisStream.maxRetries` - **optional** the maximum amount of retries to attempt with a request. See AWS.Kinesis.maxRetries for more information.
+* `ip` - *optional* ip of the machine that is sending the event
 * `endpoint` - **localstack-only** we recommend to run the service in development environment using Localstack. Kinesis (from Localstack) will respond at the location `http://localhost:4568`. In order to work with Kinesis, you need to provide the location(endpoint) to the AWS-sdk configuration.
 * `partitionKey` - **optional** the key used to group data by shard within a stream.
 
