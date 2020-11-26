@@ -16,6 +16,7 @@ declare namespace Events {
     };
     endpoint?: string;
     partitionKey?: string;
+    ipv4?: string;
   }
 
   interface EventSchema {
