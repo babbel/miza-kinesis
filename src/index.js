@@ -1,6 +1,5 @@
 const arnParser = require('./arnParser');
-const emitEvent = require('./event');
-const emitEvents = require('./events');
+const { emitEvent, emitEvents }  = require('./event');
 const validate = require('./validate');
 const instantiateKinesis = require('./kinesis');
 
@@ -26,7 +25,7 @@ module.exports = (config = {}) => {
       if (!events.length) throw 'Events are missing.';
 
       // Each PutRecords request can support up to only 500 records.
-      if (events.length > 500) throw 'Events array can only have 500 records';
+      if (events.length > 500) throw 'Events array can only have 500 records.';
   
       return emitEvents(kinesis, events, extendedConfig);
     };

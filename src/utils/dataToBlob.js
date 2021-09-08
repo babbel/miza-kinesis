@@ -26,6 +26,6 @@ const enrichMeta = (event, appName, ipv4) => {
 };
 
 module.exports = {
-  partitionKey, 
-  enrichMeta
+  partitionKey,
+  enrichMeta,
 };

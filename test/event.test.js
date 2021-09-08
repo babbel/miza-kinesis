@@ -1,12 +1,14 @@
 const omit = require('lodash.omit');
 const AWS = require('aws-sdk');
+const crypto = require('crypto');
+const { emitEvent, emitEvents } = require('../src/event');
 
 const HASH_RESULT = 'NEW HASH FOR THE EVENT';
 
 const digestStub = sinon.stub();
 digestStub.withArgs('hex').returns(HASH_RESULT);
 
-const createHashStub = sinon.stub();
+const createHashStub = sinon.stub(crypto, 'createHash');
 createHashStub.withArgs('md5').returns({
   update: () => ({
     digest: digestStub
@@ -18,20 +20,13 @@ const EVENT_UUID_RESULT = 'NEW UUID FOR THE EVENT';
 const toStringStub = sinon.stub();
 toStringStub.withArgs('hex').returns(EVENT_UUID_RESULT);
 
-const randomBytesStub = sinon.stub();
+const randomBytesStub = sinon.stub(crypto, 'randomBytes');
 randomBytesStub.withArgs(16).returns({ toString: toStringStub });
 
 const kinesis = new AWS.Kinesis({ region: 'eu-west-1' });
 
 const promise = sinon.stub().resolves();
 const putRecordStub = sinon.stub(kinesis, 'putRecord').returns({ promise });
-
-const emitEvent = proxyquire('../src/event', {
-  crypto: {
-    createHash: createHashStub,
-    randomBytes: randomBytesStub
-  }
-});
 
 describe('#emitEvent', () => {
   const config = {
