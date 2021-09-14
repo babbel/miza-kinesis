@@ -5,8 +5,6 @@ const arnParserSpy = sinon.spy(() => ({
 
 const emitEventSpy = sinon.stub();
 
-const emitEventsSpy = sinon.stub();
-
 const validateSpy = sinon.stub();
 
 const kinesisSpy = sinon.spy();
