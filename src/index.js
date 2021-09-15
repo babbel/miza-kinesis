@@ -20,7 +20,7 @@ module.exports = (config = {}) => {
   }
 
   if (config.type && config.type === 'BATCH') {
-    return async (events) => {
+    return (events) => {
 
       if (!Array.isArray(events)) throw new Error('Events needs to be an Array.');
 
@@ -29,12 +29,7 @@ module.exports = (config = {}) => {
       const emitEventsPromises = chunk(events, 500).map(chunkedEvents => 
         emitEvents(kinesis, chunkedEvents, extendedConfig));
 
-      const results = await Promise.allSettled(emitEventsPromises);
-      const failures = results.filter((result) => result.status === 'rejected');
-
-      if (failures.length > 0) {
-        throw new Error(`Tracking of events failed: ${failures}`);
-      }
+      return Promise.allSettled(emitEventsPromises);
     };
   } 
 
