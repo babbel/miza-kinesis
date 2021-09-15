@@ -12,7 +12,6 @@ jobs:
       fail-fast: false
       matrix:
         node:
-          - '10'
           - '12.13'
           - '14'
     steps:
