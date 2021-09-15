@@ -1,3 +1,5 @@
+const { expect } = require('chai');
+
 const arnParserSpy = sinon.spy(() => ({
   region: 'test-region',
   resource: 'test-stream'
@@ -95,25 +97,27 @@ describe('when calling #emitEvents', () => {
     expect(validateSpy).to.have.been.calledWith(config);
   });
 
-  it('thows an error if events is missing', () => {
+  it('thows an error if events is empty', async () => {
     const sendEvent = setConfig(config);
 
-    expect(() => sendEvent()).to.throw('Events needs to be an Array.');
+    try {
+      await sendEvent();
+    } catch (error) {
+      expect(error.message).to.equal('Events needs to be an Array.')
+    }
   });
 
-  it('thows an error if events is empty', () => {
+  it('thows an error if events are missing', async () => {
     const sendEvent = setConfig(config);
 
-    expect(() => sendEvent([])).to.throw('Events are missing.');
+    try {
+      await sendEvent([]);
+    } catch (error) {
+      expect(error.message).to.equal('Events are missing.')
+    }
   });
 
-  it('thows an error if events length is greater than 500', () => {
-    const sendEvent = setConfig(config);
-
-    expect(() => sendEvent([...Array(501).keys()])).to.throw('Events array can only have 500 records.');
-  });
-
-  it('calls emitEvent with right params', () => {
+  it('calls emitEvent with right params', async () => {
     const events = [{
       data: 'some data'
     },{
@@ -136,9 +140,11 @@ describe('when calling #emitEvents', () => {
     };
 
     const sendEvent = setConfig(config);
-    sendEvent(events);
-
-    expect(emitEventsSpy).to.have.been.calledWith(kinesisSpy, events, extendedConfig
-    );
+    try {
+      await sendEvent(events);
+    } catch (error) {
+      expect(error).to.equal(undefined);
+    }
+    expect(emitEventsSpy).to.have.been.calledWith(kinesisSpy, events, extendedConfig);
   });
 });

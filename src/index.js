@@ -1,3 +1,5 @@
+const chunk = require('lodash.chunk');
+
 const arnParser = require('./arnParser');
 const { emitEvent, emitEvents }  = require('./event');
 const validate = require('./validate');
@@ -18,16 +20,21 @@ module.exports = (config = {}) => {
   }
 
   if (config.type && config.type === 'BATCH') {
-    return (events) => {
+    return async (events) => {
 
-      if (!Array.isArray(events)) throw 'Events needs to be an Array.';
+      if (!Array.isArray(events)) throw new Error('Events needs to be an Array.');
 
-      if (!events.length) throw 'Events are missing.';
+      if (!events.length) throw new Error('Events are missing.');
 
-      // Each PutRecords request can support up to only 500 records.
-      if (events.length > 500) throw 'Events array can only have 500 records.';
-  
-      return emitEvents(kinesis, events, extendedConfig);
+      const emitEventsPromises = chunk(events, 500).map(chunkedEvents => 
+        emitEvents(kinesis, chunkedEvents, extendedConfig));
+
+      const results = await Promise.allSettled(emitEventsPromises);
+      const failures = results.filter((result) => result.status === 'rejected');
+
+      if (failures.length > 0) {
+        throw new Error(`Tracking of events failed: ${failures}`);
+      }
     };
   } 
 
