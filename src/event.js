@@ -40,7 +40,7 @@ const emitEvents = (kinesis, events, config) => {
   const records = events.map(event => {
     const enrichedEvent = enrichMeta(event, config.appName, config.ipv4);
     return {
-      Data: Buffer.from(JSON.stringify(enrichedEvent)).toString('base64'),
+      Data: JSON.stringify(enrichedEvent),
       PartitionKey: config.partitionKey || partitionKey(enrichedEvent),
     }
   })
