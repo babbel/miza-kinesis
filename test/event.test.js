@@ -94,7 +94,7 @@ describe('#emitEvent', () => {
       emitEvents(kinesis, events, { ...config, type: 'BATCH'});
       expect(putRecordsStub).to.have.been.calledWith({
         Records: [{
-          Data: Buffer.from(JSON.stringify(enrichedEvent)).toString('base64'),
+          Data: JSON.stringify(enrichedEvent),
           PartitionKey: EVENT_UUID_RESULT
         }],
         StreamName: 'test-stream'
