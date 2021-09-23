@@ -20,9 +20,7 @@ const setConfig = proxyquire('../src/index', {
   './event': { 
     emitEvent: emitEventSpy
   },
-  './emitEventsInBatches': {
-    emitEventsInBatches: emitEventsInBatchesSpy
-  },
+  './emitEventsInBatches': emitEventsInBatchesSpy,
   './validate': validateSpy,
   './kinesis': () => kinesisSpy
 });

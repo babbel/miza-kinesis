@@ -1,5 +1,5 @@
 const arnParser = require('./arnParser');
-const { emitEvent, emitEvents }  = require('./event');
+const { emitEvent }  = require('./event');
 const validate = require('./validate');
 const instantiateKinesis = require('./kinesis');
 const emitEventsInBatches = require('./emitEventsInBatches')
