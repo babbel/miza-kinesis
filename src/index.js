@@ -1,9 +1,8 @@
-const chunk = require('lodash.chunk');
-
 const arnParser = require('./arnParser');
 const { emitEvent, emitEvents }  = require('./event');
 const validate = require('./validate');
 const instantiateKinesis = require('./kinesis');
+const emitEventsInBatches = require('./emitEventsInBatches')
 
 module.exports = (config = {}) => {
   validate(config);
@@ -26,10 +25,7 @@ module.exports = (config = {}) => {
 
       if (!events.length) throw new Error('Events are missing.');
 
-      const emitEventsPromises = chunk(events, 500).map(chunkedEvents => 
-        emitEvents(kinesis, chunkedEvents, extendedConfig));
-
-      return Promise.allSettled(emitEventsPromises);
+      return emitEventsInBatches(kinesis, events, extendedConfig);
     };
   } 
 

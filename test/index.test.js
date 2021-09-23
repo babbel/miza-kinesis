@@ -7,7 +7,7 @@ const arnParserSpy = sinon.spy(() => ({
 
 const emitEventSpy = sinon.stub();
 
-const emitEventsSpy = sinon.stub();
+const emitEventsInBatchesSpy = sinon.stub();
 
 const validateSpy = sinon.stub();
 
@@ -18,8 +18,10 @@ const setConfig = proxyquire('../src/index', {
     parse: arnParserSpy
   },
   './event': { 
-    emitEvent: emitEventSpy, 
-    emitEvents: emitEventsSpy 
+    emitEvent: emitEventSpy
+  },
+  './emitEventsInBatches': {
+    emitEventsInBatches: emitEventsInBatchesSpy
   },
   './validate': validateSpy,
   './kinesis': () => kinesisSpy
@@ -77,7 +79,7 @@ describe('when calling #emitEvent', () => {
   });
 });
 
-describe('when calling #emitEvents', () => {
+describe('when calling #emitEventsInBatches', () => {
   const config = {
     appName: 'some app name',
     kinesisStream: {
@@ -145,6 +147,6 @@ describe('when calling #emitEvents', () => {
     } catch (error) {
       expect(error).to.equal(undefined);
     }
-    expect(emitEventsSpy).to.have.been.calledWith(kinesisSpy, events, extendedConfig);
+    expect(emitEventsInBatchesSpy).to.have.been.calledWith(kinesisSpy, events, extendedConfig);
   });
 });
