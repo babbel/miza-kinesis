@@ -39,7 +39,7 @@ const emitEvents = async (kinesis, events, config, retries) => {
   }
 };
 
-module.exports = async (kinesis, events, extendedConfig) => {
+module.exports = (kinesis, events, extendedConfig) => {
   const retries = extendedConfig.maxRetries || 1;
   const emitEventsPromises = chunk(events, MAX_RECORDS).map(chunkedEvents => 
     emitEvents(kinesis, chunkedEvents, extendedConfig, retries));
