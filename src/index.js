@@ -1,5 +1,5 @@
 const arnParser = require('./arnParser');
-const { emitEvent }  = require('./event');
+const emitEvent  = require('./event');
 const validate = require('./validate');
 const instantiateKinesis = require('./kinesis');
 const emitEventsInBatches = require('./emitEventsInBatches')
@@ -28,10 +28,10 @@ module.exports = (config = {}) => {
       return emitEventsInBatches(kinesis, events, extendedConfig);
     };
   } 
-
+  
   return (event) => {
     if (!event) throw 'Event is missing.';
-
+    
     return emitEvent(kinesis, event, extendedConfig);
   };
 };

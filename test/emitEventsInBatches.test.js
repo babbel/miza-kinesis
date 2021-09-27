@@ -1,30 +1,14 @@
-const omit = require('lodash.omit');
-const AWS = require('aws-sdk');
-const crypto = require('crypto');
-const emitEventsInBatches = require('../src/emitEventsInBatches');
-const { enrichMeta } = require('../src/enrich')
-
-const HASH_RESULT = 'NEW HASH FOR THE EVENT';
-
-const digestStub = sinon.stub();
-digestStub.withArgs('hex').returns(HASH_RESULT);
-
-// const createHashStub = sinon.stub(crypto, 'createHash');
-// createHashStub.withArgs('md5').returns({
-//   update: () => ({
-//     digest: digestStub
-//   })
-// });
+require('./test_helper'); 
 
 const EVENT_UUID_RESULT = 'NEW UUID FOR THE EVENT';
 
-const toStringStub = sinon.stub();
-toStringStub.withArgs('hex').returns(EVENT_UUID_RESULT);
-
-// const randomBytesStub = sinon.stub(crypto, 'randomBytes');
-// randomBytesStub.withArgs(16).returns({ toString: toStringStub });
-
+const AWS = require('aws-sdk');
 const kinesis = new AWS.Kinesis({ region: 'eu-west-1' });
+
+const emitEventsInBatches = require('../src/emitEventsInBatches');
+const { enrichMeta } = require('../src/enrich');
+
+const { expect } = require('chai');
 
 describe('#emitEvent', () => {
 
@@ -45,13 +29,13 @@ describe('#emitEvent', () => {
     appName: 'some name',
     kinesisStream: {
       resource: 'test-stream'
-    }
+    },
+    maxRetries: 2
   };
 
   let events = [{
     data: 'some data'
   }];
-
 
   describe('when calling emitEventsInBatches with kinesis, events, config', () => {
     it('calls putRecords on kinesis with right params', () => {
@@ -111,5 +95,56 @@ describe('#emitEvent', () => {
         )),
       });
     });
+
+    it('fails when kinesis returns an error', async () => {
+      const error = new Error('something went wrong');
+      putRecordsStub.returns({ promise: () => Promise.reject(error) });
+  
+      try {
+        await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+      } catch (err) {
+        expect(err).to.equal(error);
+        expect(putRecordsStub).to.have.callCount(2); 
+      }
+    })
+    
+    it('fails when at least one record was not sent successful', async () => {
+      const data = {
+        FailedRecordCount: 2,
+        Records: [
+          { SequenceNumber: 1 },
+          { SequenceNumber: 2, ErrorCode: 123, ErrorMessage: 'FailedWithErrorOnRecord1' },
+          { SequenceNumber: 3, ErrorCode: 456, ErrorMessage: 'FailedWithErrorOnRecord2' },
+        ],
+      };
+      putRecordsStub.returns({ promise: () => Promise.resolve(data) });
+      
+      events = [...Array(3).keys()].map((num) => (
+        { name: `event:${num}` }
+      ));
+  
+      const result = await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+
+      expect(result).to.deep.equal([
+        {
+          'status': 'rejected',
+          'reason': [
+            {
+              'failedEvent': {
+                'name': 'event:1'
+              },
+              'failureMessage': '123: FailedWithErrorOnRecord1'
+            },
+            {
+              'failedEvent': {
+                'name': 'event:2'
+              },
+              'failureMessage': '456: FailedWithErrorOnRecord2'
+            }
+          ]
+        }
+      ])
+      expect(putRecordsStub).to.have.callCount(3); 
+    })
   });
 });

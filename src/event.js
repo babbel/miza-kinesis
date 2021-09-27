@@ -11,6 +11,22 @@ const emitEvent = (kinesis, event, config) => {
   return kinesis.putRecord(params).promise();
 };
 
-module.exports = {
-  emitEvent
+const emitEventWithRetry = async (kinesis, event, config, retries) => {
+  try {
+      return await emitEvent(kinesis, event, config)
+  } catch(error) {
+      if (retries === 1) throw error;
+      return await emitEventWithRetry(kinesis, event, config, retries - 1);
+  }
+};
+
+module.exports = (kinesis, event, config) => {
+  const retries = config.maxRetries || 1;
+  return new Promise((resolve, reject) => {
+    try {
+      resolve(emitEventWithRetry(kinesis, event, config, retries))
+    } catch(error) {
+      reject(error)
+    }
+  })
 };

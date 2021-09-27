@@ -17,9 +17,7 @@ const setConfig = proxyquire('../src/index', {
   './arnParser': {
     parse: arnParserSpy
   },
-  './event': { 
-    emitEvent: emitEventSpy
-  },
+  './event': emitEventSpy,
   './emitEventsInBatches': emitEventsInBatchesSpy,
   './validate': validateSpy,
   './kinesis': () => kinesisSpy

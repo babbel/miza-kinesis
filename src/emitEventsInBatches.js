@@ -2,20 +2,8 @@ const chunk = require('lodash.chunk');
 const { enrichMeta, partitionKey } = require('./enrich')
 
 const MAX_RECORDS = 500; 
-const RETRY = {
-  attempts: 3,
-  interval: (retryCount) => 1000 * (retryCount),
-};
 
-const wait = (time) => (
-  new Promise((resolve) => {
-    setTimeout(resolve, time);
-  })
-);
-
-const emitEvents = async (kinesis, events, config, attempt = 1) => {
-  console.log('emitEvents: events', events.length)  
-
+const emitEvents = async (kinesis, events, config, retries) => {
   const records = events.map(event => {
     const enrichedEvent = enrichMeta(event, config.appName, config.ipv4);
     return {
@@ -29,30 +17,31 @@ const emitEvents = async (kinesis, events, config, attempt = 1) => {
     StreamName: config.kinesisStream.resource
   };
 
-  const { FailedRecordCount, Records } = await kinesis.putRecords(params).promise();
+  try {
+    const { FailedRecordCount, Records } = await kinesis.putRecords(params).promise();
+    if(FailedRecordCount !== 0) {
+      const failedEvents = [];
+      Records.forEach((failedRecord, index) => {
+        if (failedRecord.ErrorCode) {
+          failedEvents.push({
+            failedEvent: events[index],
+            failureMessage: `${failedRecord.ErrorCode}: ${failedRecord.ErrorMessage}`
+          });
+        }
+      });
 
-  if (FailedRecordCount > 0) {
-    let failedEvents = [];
-    for (const [ index, failedRecord ] of Records) {
-      if (failedRecord.ErrorCode) {
-        failedEvents.push({ failedRecord, failedEvent: events[index]});
-      }
+      if (retries === 1) throw failedEvents; 
+      await emitEvents(kinesis, failedEvents.map(failed => failed.failedEvent), config, retries - 1);
     }
-
-    if (attempt < RETRY.attempts) {
-      await wait(RETRY.interval(attempt));
-      attempt += 1;
-
-      emitEvents(kinesis, failedEvents.map((_, failedEvent) => failedEvent), extendedConfig, attempt); 
-    } else {
-      throw new Error(failedEvents)
-    }
+  } catch(error) {
+    if (retries === 1) throw error
+    await emitEvents(kinesis, events, config, retries - 1);
   }
 };
 
-module.exports = (kinesis, events, extendedConfig) => {
+module.exports = async (kinesis, events, extendedConfig) => {
+  const retries = extendedConfig.maxRetries || 1;
   const emitEventsPromises = chunk(events, MAX_RECORDS).map(chunkedEvents => 
-    emitEvents(kinesis, chunkedEvents, extendedConfig));
-
+    emitEvents(kinesis, chunkedEvents, extendedConfig, retries));
   return Promise.allSettled(emitEventsPromises);
 };
