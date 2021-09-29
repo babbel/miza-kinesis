@@ -45,7 +45,7 @@ describe('#emitEvent', () => {
           user_agent: 'miza-kinesis'
         }
       };
-
+      
       emitEvent(kinesis, event, config);
 
       expect(putRecordStub).to.have.been.calledOnce;
