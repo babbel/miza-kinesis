@@ -144,7 +144,7 @@ describe('#emitEventsInBatches', () => {
           ]
         }
       ])
-      expect(putRecordsStub).to.have.callCount(3); 
+      expect(putRecordsStub).to.have.callCount(7); 
     });
 
     context('when calling emitEventsInBatches with PartitionKey in config', () => {

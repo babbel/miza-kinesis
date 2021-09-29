@@ -92,7 +92,7 @@ const events = require('@babbel/miza-kinesis');
 
 const emitEvent = events(config);
 
-const testEvents = [
+const events = [
   {
     name: 'request:performed',
     meta: {},
@@ -103,17 +103,10 @@ const testEvents = [
   },
 ];
 
-emitEvent(testEvents)
+emitEvent(events)
   .then((data) => console.log(data))
   .catch((error) => console.log(error));
 ```
-
-const trackGoalPolyfill = async (testEvents) => {
-const result = await emitEvent(testEvents);
-console.log('trackGoalPolyfill', JSON.stringify(result, null, 2));
-};
-
-trackGoalPolyfill(testEvents)
 
 Config has a following format:
 

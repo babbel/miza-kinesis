@@ -30,11 +30,11 @@ const emitEvents = async (kinesis, events, config, retries) => {
         }
       });
 
-      if (retries === 1) throw failedEvents; 
+      if (retries === 0) throw failedEvents; 
       await emitEvents(kinesis, failedEvents.map(failed => failed.failedEvent), config, retries - 1);
     }
   } catch(error) {
-    if (retries === 1) throw error
+    if (retries === 0) throw error
     await emitEvents(kinesis, events, config, retries - 1);
   }
 };
