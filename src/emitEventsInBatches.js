@@ -31,16 +31,17 @@ const emitEvents = async (kinesis, events, config, retries) => {
       });
 
       if (retries === 0) throw failedEvents; 
-      await emitEvents(kinesis, failedEvents.map(failed => failed.failedEvent), config, retries - 1);
+      return await emitEvents(kinesis, failedEvents.map(failed => failed.failedEvent), config, retries - 1);
     }
   } catch(error) {
     if (retries === 0) throw error
-    await emitEvents(kinesis, events, config, retries - 1);
+
+    return await emitEvents(kinesis, events, config, retries - 1);
   }
 };
 
 module.exports = (kinesis, events, extendedConfig) => {
-  const retries = extendedConfig.maxRetries || 1;
+  const retries = extendedConfig.maxRetries || 0;
   const emitEventsPromises = chunk(events, MAX_RECORDS).map(chunkedEvents => 
     emitEvents(kinesis, chunkedEvents, extendedConfig, retries));
   return Promise.allSettled(emitEventsPromises);

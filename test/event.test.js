@@ -72,6 +72,18 @@ describe('#emitEvent', () => {
         expect(putRecordStub).to.have.callCount(3); 
       }
     });
+
+    it('fails when kinesis returns an error', async () => {
+      const error = new Error('something went wrong');
+      putRecordStub.returns({ promise: () => Promise.reject(error) });
+  
+      try {
+        await emitEvent(kinesis, event, { ...config, maxRetries: undefined } );
+      } catch (err) {
+        expect(err).to.equal(error);
+        expect(putRecordStub).to.have.callCount(1); 
+      }
+    });
   });
 
   describe('when calling emitEvent with PartitionKey in config', () => {

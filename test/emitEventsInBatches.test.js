@@ -11,13 +11,13 @@ const { enrichMeta } = require('../src/enrich');
 const { expect } = require('chai');
 
 describe('#emitEventsInBatches', () => {
-
   beforeEach(() => {
+    clock = sinon.useFakeTimers();
+    createdAt = new Date();
+
     putRecordsStub = sinon.stub(kinesis, 'putRecords').returns({
       promise: () => Promise.resolve({ FailedRecordCount: 0 }),
     });
-    clock = sinon.useFakeTimers();
-    createdAt = new Date();
   });
 
   afterEach(() => {
@@ -106,61 +106,76 @@ describe('#emitEventsInBatches', () => {
         expect(err).to.equal(error);
         expect(putRecordsStub).to.have.callCount(3); 
       }
-    })
-    
-    it('fails when at least one record was not sent successful', async () => {
-      const data = {
-        FailedRecordCount: 2,
-        Records: [
-          { SequenceNumber: 1 },
-          { SequenceNumber: 2, ErrorCode: 123, ErrorMessage: 'FailedWithErrorOnRecord1' },
-          { SequenceNumber: 3, ErrorCode: 456, ErrorMessage: 'FailedWithErrorOnRecord2' },
-        ],
-      };
-      putRecordsStub.returns({ promise: () => Promise.resolve(data) });
-      
-      events = [...Array(3).keys()].map((num) => (
-        { name: `event:${num}` }
-      ));
-  
-      const result = await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
-
-      expect(result).to.deep.equal([
-        {
-          'status': 'rejected',
-          'reason': [
-            {
-              'failedEvent': {
-                'name': 'event:1'
-              },
-              'failureMessage': '123: FailedWithErrorOnRecord1'
-            },
-            {
-              'failedEvent': {
-                'name': 'event:2'
-              },
-              'failureMessage': '456: FailedWithErrorOnRecord2'
-            }
-          ]
-        }
-      ])
-      expect(putRecordsStub).to.have.callCount(7); 
     });
 
-    context('when calling emitEventsInBatches with PartitionKey in config', () => {
-      it('calls putRecord on kinesis with the PartitionKey in config', () => {
-        const configWithPartitionKey = { ...config, partitionKey: 'uuid'};
+    context('on (partial) failure, when config.maxRetries', () => {
+      it('is undefined, putRecordsStub is called 1 time', async () => {
+        const error = new Error('something went wrong');
+        putRecordsStub.returns({ promise: () => Promise.reject(error) });
+    
+        try {
+          await emitEventsInBatches(kinesis, [{
+            data: 'event 1'
+          }], { ...config, type: 'BATCH', maxRetries: undefined });
+        } catch (err) {
+          expect(err).to.equal(error);
+        }
+        expect(putRecordsStub).to.have.callCount(1); 
+      })
   
-        emitEventsInBatches(kinesis, events, configWithPartitionKey);
-        expect(putRecordsStub).to.have.been.calledWith({
-          Records: events.map((event) => (
-            {
-              Data: JSON.stringify(enrichMeta(event, config.appName)),
-              PartitionKey: 'uuid'
-            }
-          )),
-          StreamName: 'test-stream'
-        });
+      it(`${config.maxRetries}, putRecordsStub is called 7 times`, async () => {
+        const data = {
+          FailedRecordCount: 2,
+          Records: [
+            { SequenceNumber: 1 },
+            { SequenceNumber: 2, ErrorCode: 123, ErrorMessage: 'FailedWithErrorOnRecord1' },
+            { SequenceNumber: 3, ErrorCode: 456, ErrorMessage: 'FailedWithErrorOnRecord2' },
+          ],
+        };
+        putRecordsStub.returns({ promise: () => Promise.resolve(data) });
+        
+        events = [...Array(3).keys()].map((num) => (
+          { name: `event:${num}` }
+        ));
+    
+        const result = await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+
+        expect(result).to.deep.equal([
+          {
+            'status': 'rejected',
+            'reason': [
+              {
+                'failedEvent': {
+                  'name': 'event:1'
+                },
+                'failureMessage': '123: FailedWithErrorOnRecord1'
+              },
+              {
+                'failedEvent': {
+                  'name': 'event:2'
+                },
+                'failureMessage': '456: FailedWithErrorOnRecord2'
+              }
+            ]
+          }
+        ])
+        expect(putRecordsStub).to.have.callCount(7); 
+      });
+    });
+  });
+  context('when calling emitEventsInBatches with PartitionKey in config', () => {
+    it('calls putRecord on kinesis with the PartitionKey in config', () => {
+      const configWithPartitionKey = { ...config, partitionKey: 'uuid'};
+
+      emitEventsInBatches(kinesis, events, configWithPartitionKey);
+      expect(putRecordsStub).to.have.been.calledWith({
+        Records: events.map((event) => (
+          {
+            Data: JSON.stringify(enrichMeta(event, config.appName)),
+            PartitionKey: 'uuid'
+          }
+        )),
+        StreamName: 'test-stream'
       });
     });
   });

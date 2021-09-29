@@ -21,7 +21,7 @@ const emitEventWithRetry = async (kinesis, event, config, retries) => {
 };
 
 module.exports = (kinesis, event, config) => {
-  const retries = config.maxRetries || 1;
+  const retries = config.maxRetries || 0;
   return new Promise((resolve, reject) => {
     try {
       resolve(emitEventWithRetry(kinesis, event, config, retries))
