@@ -95,11 +95,15 @@ const emitEvent = events(config);
 const events = [
   {
     name: 'request:performed',
-    meta: {},
+    meta: {
+      // ...
+    },
   },
   {
     name: 'data:saved',
-    meta: {},
+    meta: {
+      // ...
+    },
   },
 ];
 

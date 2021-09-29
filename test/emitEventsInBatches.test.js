@@ -30,7 +30,8 @@ describe('#emitEventsInBatches', () => {
     kinesisStream: {
       resource: 'test-stream'
     },
-    maxRetries: 2
+    maxRetries: 2,
+    type: 'BATCH'
   };
 
   let events = [{
@@ -39,7 +40,7 @@ describe('#emitEventsInBatches', () => {
 
   describe('when calling emitEventsInBatches with kinesis, events, config', () => {
     it('calls putRecords on kinesis with right params', () => {
-      emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+      emitEventsInBatches(kinesis, events, config);
       expect(putRecordsStub).to.have.been.calledWith({
         Records: events.map((event) => (
           {
@@ -60,7 +61,7 @@ describe('#emitEventsInBatches', () => {
         data: 'event 1'
       });
 
-      emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+      emitEventsInBatches(kinesis, events, config);
   
       expect(putRecordsStub).to.have.been.calledOnce;
     });
@@ -71,7 +72,7 @@ describe('#emitEventsInBatches', () => {
         { name: `event:${num}` }
       ));
   
-      await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+      await emitEventsInBatches(kinesis, events, config);
   
       expect(putRecordsStub).to.have.been.calledTwice;
   
@@ -101,7 +102,7 @@ describe('#emitEventsInBatches', () => {
       putRecordsStub.returns({ promise: () => Promise.reject(error) });
   
       try {
-        await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+        await emitEventsInBatches(kinesis, events, config);
       } catch (err) {
         expect(err).to.equal(error);
         expect(putRecordsStub).to.have.callCount(3); 
@@ -116,7 +117,7 @@ describe('#emitEventsInBatches', () => {
         try {
           await emitEventsInBatches(kinesis, [{
             data: 'event 1'
-          }], { ...config, type: 'BATCH', maxRetries: undefined });
+          }], { ...config, maxRetries: undefined });
         } catch (err) {
           expect(err).to.equal(error);
         }
@@ -138,7 +139,7 @@ describe('#emitEventsInBatches', () => {
           { name: `event:${num}` }
         ));
     
-        const result = await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
+        const result = await emitEventsInBatches(kinesis, events, config);
 
         expect(result).to.deep.equal([
           {
