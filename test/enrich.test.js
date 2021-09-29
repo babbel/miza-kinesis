@@ -12,12 +12,13 @@ const config = {
   kinesisStream: {
     resource: 'test-stream'
   },
+  ipv4: 'ipv4',
   maxRetries: 2
 };
 
 describe('when creating a PartitionKey', () => {
   describe('when no identifier is passed', () => {
-    it('emits event with random PartitionKey', () => {
+    it('returns with random PartitionKey', () => {
       const result = partitionKey(event)
       expect(result).to.equal(HASH_RESULT);
     });
@@ -33,7 +34,7 @@ describe('when creating a PartitionKey', () => {
     };
 
     context('when uuid, tracking_uuid, meta.udid and meta.event_uuid are set', () => {
-      it('emits event with PartitionKey == event.uuid', () => {
+      it('returns with PartitionKey == event.uuid', () => {
         const result = partitionKey(eventWithAllIdentifiers);
 
         expect(result).to.equal('user_uuid');
@@ -43,7 +44,7 @@ describe('when creating a PartitionKey', () => {
     context('when tracking_uuid, meta.udid and meta.event_uuid are set', () => {
       const event = omit(eventWithAllIdentifiers, ['uuid']);
 
-      it('emits event with PartitionKey == event.tracking_uuid', () => {
+      it('returns with PartitionKey == event.tracking_uuid', () => {
         const result = partitionKey(event);
         expect(result).to.equal('user_tracking_uuid');
       });
@@ -52,7 +53,7 @@ describe('when creating a PartitionKey', () => {
     context('when meta.udid and meta.event_uuid are set', () => {
       const event = omit(eventWithAllIdentifiers, ['uuid', 'tracking_uuid']);
 
-      it('emits event with PartitionKey == event.meta.udid', () => {
+      it('returns with PartitionKey == event.meta.udid', () => {
         const result = partitionKey(event);
         expect(result).to.equal('mobile_device_udid')
       });
@@ -66,10 +67,33 @@ describe('when creating a PartitionKey', () => {
         }
       };
 
-      it('emits event with PartitionKey == event.meta.event_uuid', () => {
+      it('returns with PartitionKey == event.meta.event_uuid', () => {
         const result = partitionKey(event);
         expect(result).to.equal('event_uuid');
       });
     });
+  });
+});
+
+describe('when enriching Meta', () => {
+  it('returns with right meta keys', () => {
+    const clock = sinon.useFakeTimers();
+    const createdAt = new Date().toISOString();
+
+    const result = enrichMeta(event, config.appName, config.ipv4)
+
+    expect(result).to.deep.equal({
+      created_at: createdAt,
+      key: 'value',
+      meta: {
+        created_at: createdAt,
+        event_uuid: EVENT_UUID_RESULT,
+        producer: 'some name',
+        user_agent: 'miza-kinesis',
+        ipv4: 'ipv4'
+      }
+    });
+
+    clock.restore();
   });
 });

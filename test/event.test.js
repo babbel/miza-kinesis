@@ -8,7 +8,6 @@ const kinesis = new AWS.Kinesis({ region: 'eu-west-1' });
 const emitEvent = require('../src/event');
 
 const promise = sinon.stub().resolves();
-const putRecordStub = sinon.stub(kinesis, 'putRecord').returns({ promise });
 
 describe('#emitEvent', () => {
   const config = {
@@ -19,15 +18,23 @@ describe('#emitEvent', () => {
     maxRetries: 2
   };
 
+  const event = {
+    data: 'some data'
+  };
+
+  beforeEach(() => {
+    putRecordStub = sinon.stub(kinesis, 'putRecord').returns({ promise });
+    clock = sinon.useFakeTimers();
+    createdAt = new Date();
+  });
+
+  afterEach(() => {
+    putRecordStub.restore();
+    clock.restore();
+  });
+
   describe('when calling emitEvent with kinesis, event, config', () => {
-    const event = {
-      data: 'some data'
-    };
-
     it('calls putRecord on kinesis with right params', () => {
-      const clock = sinon.useFakeTimers();
-
-      const createdAt = new Date();
       const enrichedEvent = {
         created_at: createdAt,
         data: 'some data',
@@ -40,24 +47,34 @@ describe('#emitEvent', () => {
       };
 
       emitEvent(kinesis, event, config);
-        expect(putRecordStub).to.have.been.calledWith({
-          Data: JSON.stringify(enrichedEvent),
-          PartitionKey: EVENT_UUID_RESULT,
-          StreamName: 'test-stream'
-        });
-        clock.restore();
-      });
 
-      it('returns a promise', () => {
-        expect(emitEvent(kinesis, event, config)).to.be.a('promise');
+      expect(putRecordStub).to.have.been.calledOnce;
+      expect(putRecordStub).to.have.been.calledWith({
+        Data: JSON.stringify(enrichedEvent),
+        PartitionKey: EVENT_UUID_RESULT,
+        StreamName: 'test-stream'
       });
+      clock.restore();
+    });
+
+    it('returns a promise', () => {
+      expect(emitEvent(kinesis, event, config)).to.be.a('promise');
+    });
+
+    it('fails when kinesis returns an error', async () => {
+      const error = new Error('something went wrong');
+      putRecordStub.returns({ promise: () => Promise.reject(error) });
+  
+      try {
+        await emitEvent(kinesis, event, config);
+      } catch (err) {
+        expect(err).to.equal(error);
+        expect(putRecordStub).to.have.callCount(3); 
+      }
+    });
   });
 
   describe('when calling emitEvent with PartitionKey in config', () => {
-    const event = {
-      data: 'event data'
-    };
-
     it('calls putRecord on kinesis with the PartitionKey in config', () => {
       const clock = sinon.useFakeTimers();
       const config = {
@@ -71,7 +88,7 @@ describe('#emitEvent', () => {
       const createdAt = new Date();
       const enrichedEvent = {
         created_at: createdAt,
-        data: 'event data',
+        data: 'some data',
         meta:
         { created_at: createdAt,
           event_uuid: EVENT_UUID_RESULT,
@@ -81,43 +98,42 @@ describe('#emitEvent', () => {
       };
 
       emitEvent(kinesis, event, config);
-        expect(putRecordStub).to.have.been.calledWith({
-          Data: JSON.stringify(enrichedEvent),
-          PartitionKey: 'uuid',
-          StreamName: 'test-stream'
-        });
-        clock.restore();
+      expect(putRecordStub).to.have.been.calledWith({
+        Data: JSON.stringify(enrichedEvent),
+        PartitionKey: 'uuid',
+        StreamName: 'test-stream'
       });
+      clock.restore();
+    });
 
+    it('calls putRecord on kinesis with event uuid when PartitionKey is undefined', () => {
+      const clock = sinon.useFakeTimers();
+      const config = {
+        appName: 'test-app',
+        kinesisStream: {
+          resource: 'test-stream'
+        }
+      };
 
-      it('calls putRecord on kinesis with event uuid when PartitionKey is undefined', () => {
-        const clock = sinon.useFakeTimers();
-        const config = {
-          appName: 'test-app',
-          kinesisStream: {
-            resource: 'test-stream'
-          }
-        };
-  
-        const createdAt = new Date();
-        const enrichedEvent = {
-          created_at: createdAt,
-          data: 'event data',
-          meta:
-          { created_at: createdAt,
-            event_uuid: EVENT_UUID_RESULT,
-            producer: 'test-app',
-            user_agent: 'miza-kinesis' 
-          }
-        };
-  
-        emitEvent(kinesis, event, config);
-          expect(putRecordStub).to.have.been.calledWith({
-            Data: JSON.stringify(enrichedEvent),
-            PartitionKey: EVENT_UUID_RESULT,
-            StreamName: 'test-stream'
-          });
-          clock.restore();
-        });
+      const createdAt = new Date();
+      const enrichedEvent = {
+        created_at: createdAt,
+        data: 'some data',
+        meta:
+        { created_at: createdAt,
+          event_uuid: EVENT_UUID_RESULT,
+          producer: 'test-app',
+          user_agent: 'miza-kinesis' 
+        }
+      };
+
+      emitEvent(kinesis, event, config);
+      expect(putRecordStub).to.have.been.calledWith({
+        Data: JSON.stringify(enrichedEvent),
+        PartitionKey: EVENT_UUID_RESULT,
+        StreamName: 'test-stream'
+      });
+      clock.restore();
+    });
   });
 });

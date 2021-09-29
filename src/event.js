@@ -15,7 +15,7 @@ const emitEventWithRetry = async (kinesis, event, config, retries) => {
   try {
       return await emitEvent(kinesis, event, config)
   } catch(error) {
-      if (retries === 1) throw error;
+      if (retries === 0) throw error;
       return await emitEventWithRetry(kinesis, event, config, retries - 1);
   }
 };

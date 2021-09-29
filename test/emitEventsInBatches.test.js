@@ -10,7 +10,7 @@ const { enrichMeta } = require('../src/enrich');
 
 const { expect } = require('chai');
 
-describe('#emitEvent', () => {
+describe('#emitEventsInBatches', () => {
 
   beforeEach(() => {
     putRecordsStub = sinon.stub(kinesis, 'putRecords').returns({
@@ -104,7 +104,7 @@ describe('#emitEvent', () => {
         await emitEventsInBatches(kinesis, events, { ...config, type: 'BATCH'});
       } catch (err) {
         expect(err).to.equal(error);
-        expect(putRecordsStub).to.have.callCount(2); 
+        expect(putRecordsStub).to.have.callCount(3); 
       }
     })
     
@@ -145,6 +145,6 @@ describe('#emitEvent', () => {
         }
       ])
       expect(putRecordsStub).to.have.callCount(3); 
-    })
+    });
   });
 });
