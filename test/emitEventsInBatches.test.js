@@ -146,5 +146,22 @@ describe('#emitEventsInBatches', () => {
       ])
       expect(putRecordsStub).to.have.callCount(3); 
     });
+
+    context('when calling emitEventsInBatches with PartitionKey in config', () => {
+      it('calls putRecord on kinesis with the PartitionKey in config', () => {
+        const configWithPartitionKey = { ...config, partitionKey: 'uuid'};
+  
+        emitEventsInBatches(kinesis, events, configWithPartitionKey);
+        expect(putRecordsStub).to.have.been.calledWith({
+          Records: events.map((event) => (
+            {
+              Data: JSON.stringify(enrichMeta(event, config.appName)),
+              PartitionKey: 'uuid'
+            }
+          )),
+          StreamName: 'test-stream'
+        });
+      });
+    });
   });
 });
