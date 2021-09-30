@@ -124,7 +124,7 @@ describe('#emitEventsInBatches', () => {
         expect(putRecordsStub).to.have.callCount(1); 
       })
   
-      it(`${config.maxRetries}, putRecordsStub is called 7 times`, async () => {
+      it(`${config.maxRetries}, putRecordsStub is called 6 times`, async () => {
         const data = {
           FailedRecordCount: 2,
           Records: [
@@ -139,24 +139,18 @@ describe('#emitEventsInBatches', () => {
           { name: `event:${num}` }
         ));
     
-        const result = await emitEventsInBatches(kinesis, events, config);
+        const result = await emitEventsInBatches(kinesis, events, { ...config, ipv4: 'ipv4' });
 
         expect(result).to.deep.equal([
           {
             'status': 'rejected',
             'reason': [
               {
-                'failedEvent': {
-                  name: 'event:1',
-                  created_at: createdAt
-                },
+                'failedEvent': enrichMeta(events[1], config.appName, 'ipv4'),
                 'failureMessage': '123: FailedWithErrorOnRecord1'
               },
               {
-                'failedEvent': {
-                  name: 'event:2',
-                  created_at: createdAt,
-                },
+                'failedEvent': enrichMeta(events[2], config.appName, 'ipv4'),
                 'failureMessage': '456: FailedWithErrorOnRecord2'
               }
             ]

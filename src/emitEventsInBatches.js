@@ -29,7 +29,7 @@ const emitEvents = async (kinesis, records, config, retries) => {
         if (failedRecord.ErrorCode) {
           failedEvents.push({
             failedRecord: records[index],
-            failedEvent: omit(JSON.parse(records[index].Data), ['meta']),
+            failedEvent: JSON.parse(records[index].Data),
             failureMessage: `${failedRecord.ErrorCode}: ${failedRecord.ErrorMessage}`
           });
         }
