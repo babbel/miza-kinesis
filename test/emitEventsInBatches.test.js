@@ -13,7 +13,7 @@ const { expect } = require('chai');
 describe('#emitEventsInBatches', () => {
   beforeEach(() => {
     clock = sinon.useFakeTimers();
-    createdAt = new Date();
+    createdAt = new Date().toISOString();
 
     putRecordsStub = sinon.stub(kinesis, 'putRecords').returns({
       promise: () => Promise.resolve({ FailedRecordCount: 0 }),
@@ -147,20 +147,22 @@ describe('#emitEventsInBatches', () => {
             'reason': [
               {
                 'failedEvent': {
-                  'name': 'event:1'
+                  name: 'event:1',
+                  created_at: createdAt
                 },
                 'failureMessage': '123: FailedWithErrorOnRecord1'
               },
               {
                 'failedEvent': {
-                  'name': 'event:2'
+                  name: 'event:2',
+                  created_at: createdAt,
                 },
                 'failureMessage': '456: FailedWithErrorOnRecord2'
               }
             ]
           }
         ])
-        expect(putRecordsStub).to.have.callCount(7); 
+        expect(putRecordsStub).to.have.callCount(6); 
       });
     });
   });
