@@ -47,9 +47,9 @@ const emitEvents = async (kinesis, records, config, retries) => {
 
 module.exports = (kinesis, events, config) => {
   const retries = config.maxRetries || 0;
-  const emitEventsPromises = chunk(events, MAX_RECORDS).map(chunkedEvents => {
+  const emitEventsPromises = chunk(events, MAX_RECORDS).map(async (chunkedEvents) => {
     const enrichedRecords = enrichRecords(chunkedEvents, config);
-    return emitEvents(kinesis, enrichedRecords, config, retries);
+    return await emitEvents(kinesis, enrichedRecords, config, retries);
   });
   return Promise.allSettled(emitEventsPromises);
 };
