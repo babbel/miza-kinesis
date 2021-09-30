@@ -20,7 +20,7 @@ const emitEventWithRetry = async (kinesis, event, config, retries) => {
   }
 };
 
-module.exports = (kinesis, event, config) => {
+module.exports = async (kinesis, event, config) => {
   const retries = config.maxRetries || 0;
   return emitEventWithRetry(kinesis, event, config, retries);
 };
