@@ -25,7 +25,12 @@ declare namespace Events {
     [key: string]: unknown; // dependent on the specific event schema
   }
 
-  type EmitEvent = (event: EventSchema | EventSchema[]) => ReturnType<
-    AWS.Request<AWS.Kinesis.Types.PutRecordOutput | AWS.Kinesis.Types.PutRecordsOutput, AWS.AWSError>['promise']
+  type EmitEvent = (
+    event: EventSchema | EventSchema[]
+  ) => ReturnType<
+    AWS.Request<
+      AWS.Kinesis.Types.PutRecordOutput | AWS.Kinesis.Types.PutRecordsOutput,
+      AWS.AWSError
+    >["promise"]
   >;
 }

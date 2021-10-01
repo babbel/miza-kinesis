@@ -32,29 +32,29 @@ Config to track single event:
 
 ```js
 const config = {
-  appName: 'application-name',
+  appName: "application-name",
   kinesisStream: {
-    arn: 'Kinesis arn',
+    arn: "Kinesis arn",
     httpOptions: {
       connectTimeout: 1000,
       timeout: 1000,
     },
     maxRetries: 10,
   },
-  ipv4: '127.0.0.1', // optional
-  endpoint: 'http://localhost:4568', // localstack only
+  ipv4: "127.0.0.1", // optional
+  endpoint: "http://localhost:4568", // localstack only
 };
 ```
 
 Code Example:
 
 ```js
-const events = require('@babbel/miza-kinesis');
+const events = require("@babbel/miza-kinesis");
 
 const emitEvent = events(config);
 
 const event = {
-  name: 'request:performed',
+  name: "request:performed",
   meta: {
     // ...
   },
@@ -70,37 +70,37 @@ Config to track batch of 500 events:
 
 ```js
 const config = {
-  appName: 'application-name',
+  appName: "application-name",
   kinesisStream: {
-    arn: 'Kinesis arn',
+    arn: "Kinesis arn",
     httpOptions: {
       connectTimeout: 1000,
       timeout: 1000,
     },
     maxRetries: 10,
   },
-  ipv4: '127.0.0.1', // optional
-  endpoint: 'http://localhost:4568', // localstack only
-  type: 'BATCH',
+  ipv4: "127.0.0.1", // optional
+  endpoint: "http://localhost:4568", // localstack only
+  type: "BATCH",
 };
 ```
 
 Code Example:
 
 ```js
-const events = require('@babbel/miza-kinesis');
+const events = require("@babbel/miza-kinesis");
 
 const emitEvent = events(config);
 
 const events = [
   {
-    name: 'request:performed',
+    name: "request:performed",
     meta: {
       // ...
     },
   },
   {
-    name: 'data:saved',
+    name: "data:saved",
     meta: {
       // ...
     },

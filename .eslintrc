@@ -1,4 +1,6 @@
 {
+  "extends": ["prettier"],
+  "plugins": ["prettier"],
   "env": {
     "browser": true,
     "es6": true
@@ -8,7 +10,12 @@
     "proxyquire": true
   },
   "rules": {
-    "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }]
+    "prettier/prettier": ["error"],
+    "quotes": [
+      "error",
+      "single",
+      { "avoidEscape": true, "allowTemplateLiterals": true }
+    ]
   },
   "parserOptions": {
     "sourceType": "module"
