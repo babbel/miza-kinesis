@@ -66,7 +66,7 @@ emitEvent(event)
   .catch((error) => console.log(error));
 ```
 
-Config to track batch of 500 events:
+Config to track multiple events:
 
 ```js
 const config = {
@@ -118,14 +118,16 @@ Config has a following format:
 - `kinesisStream.arn` - **required** Kinesis ARN where the events will be send
 - `kinesisStream.httpOptions` - _optional_ specified in AWS SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html
 - `kinesisStream.maxRetries` - **optional** the maximum amount of retries to attempt with a request. See AWS.Kinesis.maxRetries for more information.
+- `config.maxRetries` the maximum amount of retries to attempt for failed requests.
 - `ipv4` - _optional_ ip of the machine that is sending the event
 - `endpoint` - **localstack-only** we recommend to run the service in development environment using Localstack. Kinesis (from Localstack) will respond at the location `http://localhost:4568`. In order to work with Kinesis, you need to provide the location(endpoint) to the AWS-sdk configuration.
 - `partitionKey` - **optional** the key used to group data by shard within a stream.
 
 `emitEvent` returns data in either of the following format: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html#putRecord-property or https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html#putRecords-property
+
 `event` specification you can check here: https://confluence.internal.babbel.com/wiki/display/PM/Event+Specifications
+
 `events` array of events
-`config.maxRetries` the maximum amount of retries to attempt for failed requests.
 
 ## Releasing new versions
 
