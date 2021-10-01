@@ -10,12 +10,7 @@
     "proxyquire": true
   },
   "rules": {
-    "prettier/prettier": ["error"],
-    "quotes": [
-      "error",
-      "single",
-      { "avoidEscape": true, "allowTemplateLiterals": true }
-    ]
+    "prettier/prettier": ["error"]
   },
   "parserOptions": {
     "sourceType": "module"
