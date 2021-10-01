@@ -32,29 +32,29 @@ Config to track single event:
 
 ```js
 const config = {
-  appName: "application-name",
+  appName: 'application-name',
   kinesisStream: {
-    arn: "Kinesis arn",
+    arn: 'Kinesis arn',
     httpOptions: {
       connectTimeout: 1000,
       timeout: 1000,
     },
     maxRetries: 10,
   },
-  ipv4: "127.0.0.1", // optional
-  endpoint: "http://localhost:4568", // localstack only
+  ipv4: '127.0.0.1', // optional
+  endpoint: 'http://localhost:4568', // localstack only
 };
 ```
 
 Code Example:
 
 ```js
-const events = require("@babbel/miza-kinesis");
+const events = require('@babbel/miza-kinesis');
 
 const emitEvent = events(config);
 
 const event = {
-  name: "request:performed",
+  name: 'request:performed',
   meta: {
     // ...
   },
@@ -70,37 +70,37 @@ Config to track batch of 500 events:
 
 ```js
 const config = {
-  appName: "application-name",
+  appName: 'application-name',
   kinesisStream: {
-    arn: "Kinesis arn",
+    arn: 'Kinesis arn',
     httpOptions: {
       connectTimeout: 1000,
       timeout: 1000,
     },
     maxRetries: 10,
   },
-  ipv4: "127.0.0.1", // optional
-  endpoint: "http://localhost:4568", // localstack only
-  type: "BATCH",
+  ipv4: '127.0.0.1', // optional
+  endpoint: 'http://localhost:4568', // localstack only
+  type: 'BATCH',
 };
 ```
 
 Code Example:
 
 ```js
-const events = require("@babbel/miza-kinesis");
+const events = require('@babbel/miza-kinesis');
 
 const emitEvent = events(config);
 
 const events = [
   {
-    name: "request:performed",
+    name: 'request:performed',
     meta: {
       // ...
     },
   },
   {
-    name: "data:saved",
+    name: 'data:saved',
     meta: {
       // ...
     },
@@ -124,7 +124,8 @@ Config has a following format:
 
 `emitEvent` returns data in either of the following format: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html#putRecord-property or https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html#putRecords-property
 `event` specification you can check here: https://confluence.internal.babbel.com/wiki/display/PM/Event+Specifications
-`events` array of events with maxiumn of 500 (Each PutRecords request can support up to 500 records.)
+`events` array of events
+`config.maxRetries` the maximum amount of retries to attempt for failed requests.
 
 ## Releasing new versions
 

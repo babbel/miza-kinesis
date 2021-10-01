@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support retrying of failed requests
+- Transparently handle kinesis limit of 500 events at once
 
 ## [1.11.0]
 
