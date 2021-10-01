@@ -3,7 +3,7 @@ name: miza-kinesis - build and publish
 on: [push, create]
 
 env:
-  NODE_VERSION: '12.14'
+  NODE_VERSION: "12.14"
 
 jobs:
   test:
@@ -12,15 +12,15 @@ jobs:
       fail-fast: false
       matrix:
         node:
-          - '12.13'
-          - '14'
+          - "12.13"
+          - "14"
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Install dependencies and test
         run: npm ci
       - name: Linters
@@ -38,7 +38,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Build npm package
         run: npm run build
