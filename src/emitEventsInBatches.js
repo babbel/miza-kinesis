@@ -2,6 +2,8 @@ const chunk = require("lodash.chunk");
 const omit = require("lodash.omit");
 const { enrichMeta, partitionKey } = require("./enrich");
 
+// Each PutRecords request can support up to 500 records.
+// https://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecords.html
 const MAX_RECORDS = 500;
 
 const enrichRecords = (events, config) => {
