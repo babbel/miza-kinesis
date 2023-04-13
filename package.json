@@ -5,8 +5,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "engines": {
-    "node": ">=14",
-    "npm": ">=9"
+    "node": ">=12",
+    "npm": ">=8"
   },
   "scripts": {
     "lint": "eslint . --ignore-path .gitignore",
