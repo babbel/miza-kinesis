@@ -1,5 +1,5 @@
 require("./test_helper");
-const omit = require("lodash.omit");
+const { omit } = require("lodash");
 
 const { enrichMeta, partitionKey } = require("../src/enrich");
 
