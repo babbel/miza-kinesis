@@ -23,6 +23,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           registry-url: "https://registry.npmjs.org"
+          cache: 'npm'
+      - name: update npm to v9
+        run: npm -g install npm@9
       - name: Install dependencies and test
         run: npm ci
       - name: Linters
