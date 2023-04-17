@@ -1,4 +1,4 @@
-const validate = require("../src/validate");
+const validate = require("../../src/validate");
 
 describe("#validate", () => {
   it("throws an error if appName is missing", () => {

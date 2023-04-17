@@ -5,8 +5,8 @@ const EVENT_UUID_RESULT = "NEW UUID FOR THE EVENT";
 const AWS = require("aws-sdk");
 const kinesis = new AWS.Kinesis({ region: "eu-west-1" });
 
-const emitEventsInBatches = require("../src/emitEventsInBatches");
-const { enrichMeta } = require("../src/enrich");
+const emitEventsInBatches = require("../../src/emitEventsInBatches");
+const { enrichMeta } = require("../../src/enrich");
 
 const { expect } = require("chai");
 

@@ -32,7 +32,8 @@ jobs:
         run: npm run lint
       - name: Tests
         run: npm run test
-
+      - name: Run integration tests to kinesis
+        run: npm run test
   release:
     needs: test
     if: contains(github.ref, 'tags') && github.event_name == 'create'

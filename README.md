@@ -4,7 +4,7 @@ Provides an interface to create tracking events which are sent to AWS Kinesis.
 
 ## Requirements
 
-- [Nodejs](https://nodejs.org/en/download/) 14 with NPM version 9
+- [Nodejs](https://nodejs.org/en/download/) >= 14 with NPM version >= 8
 
 ## Development
 
@@ -62,7 +62,7 @@ const event = {
 };
 
 try {
-  const data = emitEvent(event);
+  const data = await emitEvent(event);
   console.log(data)
 }
 catch(error) {
@@ -113,7 +113,7 @@ const events = [
 ];
 
 try {
-  const data = emitEvent(event);
+  const data = await emitEvent(event);
   console.log(data)
 }
 catch(error) {

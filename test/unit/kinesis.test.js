@@ -1,6 +1,6 @@
 const AWS = require("aws-sdk");
 
-const instantiateKinesis = require("../src/kinesis");
+const instantiateKinesis = require("../../src/kinesis");
 
 describe("#kinesis", () => {
   const config = {

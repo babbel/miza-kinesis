@@ -2,5 +2,6 @@
   "recursive": true,
   "reporter": "spec",
   "color": true,
-  "require": "./test/testHelper.js"
+  "require": "./test/testHelper.js",
+  "timeout": 10000
 }

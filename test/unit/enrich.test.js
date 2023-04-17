@@ -1,7 +1,7 @@
 require("./test_helper");
 const { omit } = require("lodash");
 
-const { enrichMeta, partitionKey } = require("../src/enrich");
+const { enrichMeta, partitionKey } = require("../../src/enrich");
 
 const HASH_RESULT = "NEW HASH FOR THE EVENT";
 const EVENT_UUID_RESULT = "NEW UUID FOR THE EVENT";
