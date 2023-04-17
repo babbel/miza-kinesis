@@ -21,7 +21,6 @@ const emitEvent = events(config);
 
 describe("emitEvent", () => {
   describe("emits one event", () => {
-
     it("pushes an event to kinesis and finds it back", async () => {
       const data = await emitEvent(event);
       const kinesisData = await getEvents(data);

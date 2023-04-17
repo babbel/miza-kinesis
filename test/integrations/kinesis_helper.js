@@ -19,15 +19,20 @@ const kinesisConfig = {
 
 const kinesisClient = new AWS.Kinesis(kinesisConfig);
 
-
-const getEventsFromAllShards = async() => {
-  const shards = await kinesisClient.listShards({
-    StreamName: streamName
-  }).promise();
-  return Promise.all(shards.Shards.map(({ShardId, SequenceNumberRange: {StartingSequenceNumber }}) => {
-    return getEvents({ShardId, SequenceNumber: StartingSequenceNumber})
-  }));
-}
+const getEventsFromAllShards = async () => {
+  const shards = await kinesisClient
+    .listShards({
+      StreamName: streamName,
+    })
+    .promise();
+  return Promise.all(
+    shards.Shards.map(
+      ({ ShardId, SequenceNumberRange: { StartingSequenceNumber } }) => {
+        return getEvents({ ShardId, SequenceNumber: StartingSequenceNumber });
+      }
+    )
+  );
+};
 
 const getShardIterator = async ({ ShardId, SequenceNumber }) => {
   const params = {
@@ -55,5 +60,5 @@ module.exports = {
   getEvents,
   localKinesisEndpoint,
   kinesisConfig,
-  getEventsFromAllShards
+  getEventsFromAllShards,
 };
