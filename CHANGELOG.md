@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0]
+
+### Changed
+
+- Bump version in most of the packages
+- Add official support for newer versions of node
+- Use the new version of package-lock json
+
+### Added
+- Add integration tests for kinesis, now the code is tested against a  fake kinesis stream (internal prerequisite for AWS v3 update)
+
+### Removed
+
+- Drop node v12
+
 ## [2.0.1]
 
 ### Fixed
