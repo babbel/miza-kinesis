@@ -2,7 +2,7 @@ version: "3.9"
 
 services:  
   kinesis:
-    image: "node:16-slim"
+    image: "node:18-slim"
     user: "node"
     ports:
       - '4567:4567'
