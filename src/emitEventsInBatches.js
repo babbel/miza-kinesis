@@ -1,5 +1,6 @@
 const { chunk, omit } = require("lodash");
 const { enrichMeta, partitionKey } = require("./enrich");
+const { PutRecordCommand } = require('@aws-sdk/client-kinesis');
 
 // Each PutRecords request can support up to 500 records.
 // https://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecords.html
@@ -21,10 +22,10 @@ const emitEvents = async (kinesis, records, config, retries) => {
     StreamName: config.kinesisStream.resource,
   };
 
+  const putRecordCommand = new PutRecordCommand(params);
+
   try {
-    const { FailedRecordCount, Records } = await kinesis
-      .putRecords(params)
-      .promise();
+    const { FailedRecordCount, Records } = await kinesis.send(putRecordCommand);
 
     if (FailedRecordCount !== 0) {
       const failedEvents = [];

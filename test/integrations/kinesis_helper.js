@@ -1,4 +1,11 @@
-const AWS = require("aws-sdk");
+const { 
+  ListShardsCommand,
+  GetShardIteratorCommand,
+  GetRecordsCommand,
+  KinesisClient
+} = require('@aws-sdk/client-kinesis');
+const { NodeHttpHandler } = require('@aws-sdk/node-http-handler');
+
 
 const streamARN = "arn:aws:kinesis:eu-west-1:000000000000:stream/kinesis-test";
 const localKinesisEndpoint = "http://localhost:4567";
@@ -11,20 +18,14 @@ const kinesisConfig = {
   region,
   endpoint: localKinesisEndpoint,
   maxRetries: 3,
-  httpOptions: {
-    connectTimeout: 1000,
-    timeout: 1000,
-  },
+  requestHandler: new NodeHttpHandler({connectionTimeout: 5000}),
 };
 
-const kinesisClient = new AWS.Kinesis(kinesisConfig);
+const kinesisClient = new KinesisClient(kinesisConfig);
 
 const getEventsFromAllShards = async () => {
-  const shards = await kinesisClient
-    .listShards({
-      StreamName: streamName,
-    })
-    .promise();
+  const listShardCommand = new ListShardsCommand({ StreamName: streamName });
+  const shards = await kinesisClient.send(listShardCommand);
   return Promise.all(
     shards.Shards.map(
       ({ ShardId, SequenceNumberRange: { StartingSequenceNumber } }) => {
@@ -35,24 +36,21 @@ const getEventsFromAllShards = async () => {
 };
 
 const getShardIterator = async ({ ShardId, SequenceNumber }) => {
-  const params = {
+  const getShardIteratorCommand = new GetShardIteratorCommand({
     ShardId: ShardId,
     StreamName: streamName,
     ShardIteratorType: "AT_SEQUENCE_NUMBER",
     StartingSequenceNumber: SequenceNumber,
-  };
+  });
 
-  const { ShardIterator } = await kinesisClient
-    .getShardIterator(params)
-    .promise();
+  const { ShardIterator } = await kinesisClient.send(getShardIterator);
   return ShardIterator;
 };
 
 const getEvents = async (shardParams) => {
-  const shardIterator = await getShardIterator(shardParams);
-  const data = await kinesisClient
-    .getRecords({ ShardIterator: shardIterator })
-    .promise();
+  const ShardIterator = await getShardIterator(shardParams);
+  const getRecordsCommand = new GetRecordsCommand({ ShardIterator });
+  const data = await kinesisClient.send(getRecordsCommand);
   return data["Records"].map((record) => record["Data"]);
 };
 
