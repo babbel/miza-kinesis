@@ -1,5 +1,5 @@
 const { enrichMeta, partitionKey } = require("./enrich");
-const { PutRecordCommand } = require('@aws-sdk/client-kinesis');
+const { PutRecordCommand } = require("@aws-sdk/client-kinesis");
 
 const emitEvent = (kinesis, event, config) => {
   const enrichedEvent = enrichMeta(event, config.appName, config.ipv4);

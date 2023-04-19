@@ -1,11 +1,10 @@
-const { 
+const {
   ListShardsCommand,
   GetShardIteratorCommand,
   GetRecordsCommand,
-  KinesisClient
-} = require('@aws-sdk/client-kinesis');
-const { NodeHttpHandler } = require('@aws-sdk/node-http-handler');
-
+  KinesisClient,
+} = require("@aws-sdk/client-kinesis");
+const { NodeHttpHandler } = require("@aws-sdk/node-http-handler");
 
 const streamARN = "arn:aws:kinesis:eu-west-1:000000000000:stream/kinesis-test";
 const localKinesisEndpoint = "http://localhost:4567";
@@ -18,7 +17,7 @@ const kinesisConfig = {
   region,
   endpoint: localKinesisEndpoint,
   maxRetries: 3,
-  requestHandler: new NodeHttpHandler({connectionTimeout: 5000}),
+  requestHandler: new NodeHttpHandler({ connectionTimeout: 5000 }),
 };
 
 const kinesisClient = new KinesisClient(kinesisConfig);

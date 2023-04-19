@@ -1,12 +1,12 @@
-const { KinesisClient } = require('@aws-sdk/client-kinesis');
-const { NodeHttpHandler } = require('@aws-sdk/node-http-handler');
+const { KinesisClient } = require("@aws-sdk/client-kinesis");
+const { NodeHttpHandler } = require("@aws-sdk/node-http-handler");
 
 const instantiateKinesis = require("../../src/kinesis");
 
 describe("#kinesis", () => {
   const config = {
     region: "fake region",
-    requestHandler: new NodeHttpHandler({connectionTimeout: 5000}),
+    requestHandler: new NodeHttpHandler({ connectionTimeout: 5000 }),
     maxRetries: 20,
   };
 

@@ -2,14 +2,14 @@ require("./test_helper");
 
 const EVENT_UUID_RESULT = "NEW UUID FOR THE EVENT";
 
-const { KinesisClient } = require('@aws-sdk/client-kinesis');
+const { KinesisClient } = require("@aws-sdk/client-kinesis");
 const kinesis = new KinesisClient({ region: "eu-west-1" });
 let kinesisStub;
 
 const putRecordsStub = sinon.spy();
 
 const emitEvent = proxyquire("../src/event", {
-  '@aws-sdk/client-kinesis': { PutRecordCommand: putRecordsStub }
+  "@aws-sdk/client-kinesis": { PutRecordCommand: putRecordsStub },
 });
 
 describe("#emitEvent", () => {

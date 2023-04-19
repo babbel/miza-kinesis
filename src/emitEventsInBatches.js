@@ -1,6 +1,6 @@
 const { chunk, omit } = require("lodash");
 const { enrichMeta, partitionKey } = require("./enrich");
-const { PutRecordCommand } = require('@aws-sdk/client-kinesis');
+const { PutRecordCommand } = require("@aws-sdk/client-kinesis");
 
 // Each PutRecords request can support up to 500 records.
 // https://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecords.html

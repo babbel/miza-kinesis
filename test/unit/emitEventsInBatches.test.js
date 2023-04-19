@@ -2,13 +2,13 @@ require("./test_helper");
 
 const EVENT_UUID_RESULT = "NEW UUID FOR THE EVENT";
 
-const { KinesisClient } = require('@aws-sdk/client-kinesis');
+const { KinesisClient } = require("@aws-sdk/client-kinesis");
 const kinesis = new KinesisClient({ region: "eu-west-1" });
 const putRecordsStub = sinon.spy();
 const { enrichMeta } = require("../../src/enrich");
 
 const emitEventsInBatches = proxyquire("../src/emitEventsInBatches", {
-  '@aws-sdk/client-kinesis': { PutRecordCommand: putRecordsStub }
+  "@aws-sdk/client-kinesis": { PutRecordCommand: putRecordsStub },
 });
 
 const { expect } = require("chai");
@@ -18,7 +18,9 @@ describe("#emitEventsInBatches", () => {
     clock = sinon.useFakeTimers();
     createdAt = new Date().toISOString();
 
-    kinesisStub = sinon.stub(kinesis, "send").resolves({ FailedRecordCount: 0 });
+    kinesisStub = sinon
+      .stub(kinesis, "send")
+      .resolves({ FailedRecordCount: 0 });
   });
 
   afterEach(() => {
