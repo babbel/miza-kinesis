@@ -35,10 +35,7 @@ const config = {
   appName: 'application-name',
   kinesisStream: {
     arn: 'Kinesis arn',
-    httpOptions: {
-      connectTimeout: 1000,
-      timeout: 1000,
-    },
+    connectTimeout: 1000,
     maxRetries: 10,
   },
   ipv4: '127.0.0.1', // optional

@@ -1,8 +1,9 @@
-const Kinesis = require("aws-sdk/clients/kinesis");
+const { KinesisClient } = require("@aws-sdk/client-kinesis");
+const { NodeHttpHandler } = require("@aws-sdk/node-http-handler");
 
-module.exports = (streamConfig) =>
-  new Kinesis({
-    region: streamConfig.region,
-    httpOptions: streamConfig.httpOptions,
-    maxRetries: streamConfig.maxRetries,
+module.exports = ({ region, maxRetries, connectionTimeout }) =>
+  new KinesisClient({
+    region,
+    requestHandler: new NodeHttpHandler({ connectionTimeout }),
+    maxRetries,
   });

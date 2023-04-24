@@ -2,12 +2,15 @@ require("./test_helper");
 
 const EVENT_UUID_RESULT = "NEW UUID FOR THE EVENT";
 
-const AWS = require("aws-sdk");
-const kinesis = new AWS.Kinesis({ region: "eu-west-1" });
+const { KinesisClient } = require("@aws-sdk/client-kinesis");
+const kinesis = new KinesisClient({ region: "eu-west-1" });
+let kinesisStub;
 
-const emitEvent = require("../../src/event");
+const putRecordsStub = sinon.spy();
 
-const promise = sinon.stub().resolves();
+const emitEvent = proxyquire("../src/event", {
+  "@aws-sdk/client-kinesis": { PutRecordCommand: putRecordsStub },
+});
 
 describe("#emitEvent", () => {
   const config = {
@@ -23,13 +26,14 @@ describe("#emitEvent", () => {
   };
 
   beforeEach(() => {
-    putRecordStub = sinon.stub(kinesis, "putRecord").returns({ promise });
+    kinesisStub = sinon.stub(kinesis, "send").resolves({});
     clock = sinon.useFakeTimers();
     createdAt = new Date();
   });
 
   afterEach(() => {
-    putRecordStub.restore();
+    kinesisStub.restore();
+    putRecordsStub.resetHistory();
     clock.restore();
   });
 
@@ -48,8 +52,8 @@ describe("#emitEvent", () => {
 
       emitEvent(kinesis, event, config);
 
-      expect(putRecordStub).to.have.been.calledOnce;
-      expect(putRecordStub).to.have.been.calledWith({
+      expect(kinesisStub).to.have.been.calledOnce;
+      expect(putRecordsStub).to.have.been.calledWith({
         Data: JSON.stringify(enrichedEvent),
         PartitionKey: EVENT_UUID_RESULT,
         StreamName: "test-stream",
@@ -63,25 +67,25 @@ describe("#emitEvent", () => {
 
     it("fails when kinesis returns an error", async () => {
       const error = new Error("something went wrong");
-      putRecordStub.returns({ promise: () => Promise.reject(error) });
+      kinesisStub.rejects(error);
 
       try {
         await emitEvent(kinesis, event, config);
       } catch (err) {
         expect(err).to.equal(error);
-        expect(putRecordStub).to.have.callCount(3);
+        expect(putRecordsStub).to.have.callCount(3);
       }
     });
 
     it("fails when kinesis returns an error", async () => {
       const error = new Error("something went wrong");
-      putRecordStub.returns({ promise: () => Promise.reject(error) });
+      kinesisStub.rejects(error);
 
       try {
         await emitEvent(kinesis, event, { ...config, maxRetries: undefined });
       } catch (err) {
         expect(err).to.equal(error);
-        expect(putRecordStub).to.have.callCount(1);
+        expect(kinesisStub).to.have.callCount(1);
       }
     });
   });
@@ -108,7 +112,7 @@ describe("#emitEvent", () => {
       };
 
       emitEvent(kinesis, event, config);
-      expect(putRecordStub).to.have.been.calledWith({
+      expect(putRecordsStub).to.have.been.calledWith({
         Data: JSON.stringify(enrichedEvent),
         PartitionKey: "uuid",
         StreamName: "test-stream",
@@ -128,7 +132,7 @@ describe("#emitEvent", () => {
       };
 
       emitEvent(kinesis, event, config);
-      expect(putRecordStub).to.have.been.calledWith({
+      expect(putRecordsStub).to.have.been.calledWith({
         Data: JSON.stringify(enrichedEvent),
         PartitionKey: EVENT_UUID_RESULT,
         StreamName: "test-stream",

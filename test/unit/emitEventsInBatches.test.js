@@ -2,11 +2,14 @@ require("./test_helper");
 
 const EVENT_UUID_RESULT = "NEW UUID FOR THE EVENT";
 
-const AWS = require("aws-sdk");
-const kinesis = new AWS.Kinesis({ region: "eu-west-1" });
-
-const emitEventsInBatches = require("../../src/emitEventsInBatches");
+const { KinesisClient } = require("@aws-sdk/client-kinesis");
+const kinesis = new KinesisClient({ region: "eu-west-1" });
+const putRecordsStub = sinon.spy();
 const { enrichMeta } = require("../../src/enrich");
+
+const emitEventsInBatches = proxyquire("../src/emitEventsInBatches", {
+  "@aws-sdk/client-kinesis": { PutRecordCommand: putRecordsStub },
+});
 
 const { expect } = require("chai");
 
@@ -15,14 +18,15 @@ describe("#emitEventsInBatches", () => {
     clock = sinon.useFakeTimers();
     createdAt = new Date().toISOString();
 
-    putRecordsStub = sinon.stub(kinesis, "putRecords").returns({
-      promise: () => Promise.resolve({ FailedRecordCount: 0 }),
-    });
+    kinesisStub = sinon
+      .stub(kinesis, "send")
+      .resolves({ FailedRecordCount: 0 });
   });
 
   afterEach(() => {
-    putRecordsStub.restore();
+    kinesisStub.restore();
     clock.restore();
+    putRecordsStub.resetHistory();
   });
 
   const config = {
@@ -63,7 +67,7 @@ describe("#emitEventsInBatches", () => {
 
       emitEventsInBatches(kinesis, events, config);
 
-      expect(putRecordsStub).to.have.been.calledOnce;
+      expect(kinesisStub).to.have.been.calledOnce;
     });
 
     it("puts 501 records into Kinesis stream using 2 calls to Kinesis", async () => {
@@ -71,7 +75,7 @@ describe("#emitEventsInBatches", () => {
 
       await emitEventsInBatches(kinesis, events, config);
 
-      expect(putRecordsStub).to.have.been.calledTwice;
+      expect(kinesisStub).to.have.been.calledTwice;
 
       expect(putRecordsStub.args[0][0]).to.deep.equal({
         StreamName: "test-stream",
@@ -92,7 +96,7 @@ describe("#emitEventsInBatches", () => {
 
     it("fails when kinesis returns an error", async () => {
       const error = new Error("something went wrong");
-      putRecordsStub.returns({ promise: () => Promise.reject(error) });
+      kinesisStub.rejects(error);
 
       try {
         await emitEventsInBatches(kinesis, events, config);
@@ -105,7 +109,7 @@ describe("#emitEventsInBatches", () => {
     context("on (partial) failure, when config.maxRetries", () => {
       it("is undefined, putRecordsStub is called 1 time", async () => {
         const error = new Error("something went wrong");
-        putRecordsStub.returns({ promise: () => Promise.reject(error) });
+        kinesisStub.rejects(error);
 
         try {
           await emitEventsInBatches(
@@ -140,7 +144,7 @@ describe("#emitEventsInBatches", () => {
             },
           ],
         };
-        putRecordsStub.returns({ promise: () => Promise.resolve(data) });
+        kinesisStub.resolves(data);
 
         events = [...Array(3).keys()].map((num) => ({ name: `event:${num}` }));
 
