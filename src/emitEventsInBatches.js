@@ -1,5 +1,4 @@
-const chunk = require("lodash.chunk");
-const omit = require("lodash.omit");
+const { chunk, omit } = require("lodash");
 const { enrichMeta, partitionKey } = require("./enrich");
 
 // Each PutRecords request can support up to 500 records.

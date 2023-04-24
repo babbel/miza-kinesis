@@ -3,7 +3,7 @@ name: miza-kinesis - build and publish
 on: [push, create]
 
 env:
-  NODE_VERSION: "12.14"
+  NODE_VERSION: "18"
 
 jobs:
   test:
@@ -12,22 +12,27 @@ jobs:
       fail-fast: false
       matrix:
         node:
-          - "12.13"
           - "14"
+          - "16"
+          - "18"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           registry-url: "https://registry.npmjs.org"
+          cache: 'npm'
+      - name: update npm to v8
+        run: npm -g install npm@8
       - name: Install dependencies and test
         run: npm ci
       - name: Linters
         run: npm run lint
       - name: Tests
         run: npm run test
-
+      - name: Run integration tests to kinesis
+        run: npm run test
   release:
     needs: test
     if: contains(github.ref, 'tags') && github.event_name == 'create'

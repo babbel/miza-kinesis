@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:  
+  kinesis:
+    image: "node:18-slim"
+    user: "node"
+    ports:
+      - '4567:4567'
+    command: "npx kinesalite --port 4567 --createStreamMs 0 --deleteStreamMs 0"
+  configure-kinesis:
+    image: amazon/aws-cli:latest
+    depends_on:
+      - kinesis
+    restart: "no"
+    command: "kinesis --endpoint-url=http://host.docker.internal:4567 create-stream --stream-name kinesis-test --shard-count 1"
+    environment:
+      AWS_REGION: 'local'
+      AWS_ACCESS_KEY_ID: 'dummy'
+      AWS_SECRET_ACCESS_KEY: 'dummy'
+      AWS_MAX_ATTEMPTS: 5

@@ -4,7 +4,7 @@ Provides an interface to create tracking events which are sent to AWS Kinesis.
 
 ## Requirements
 
-- [Nodejs](https://nodejs.org/en/download/) 12.13 with NPM version 6.12
+- [Nodejs](https://nodejs.org/en/download/) >= 12 with NPM version >= 8
 
 ## Development
 
@@ -61,9 +61,14 @@ const event = {
   // ... more
 };
 
-emitEvent(event)
-  .then((data) => console.log(data))
-  .catch((error) => console.log(error));
+try {
+  const data = await emitEvent(event);
+  console.log(data)
+}
+catch(error) {
+  console.error(error);
+}
+
 ```
 
 Config to track multiple events:
@@ -107,9 +112,13 @@ const events = [
   },
 ];
 
-emitEvent(events)
-  .then((data) => console.log(data))
-  .catch((error) => console.log(error));
+try {
+  const data = await emitEvent(event);
+  console.log(data)
+}
+catch(error) {
+  console.error(error);
+}
 ```
 
 Config has a following format:

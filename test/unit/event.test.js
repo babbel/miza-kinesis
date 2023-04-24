@@ -5,7 +5,7 @@ const EVENT_UUID_RESULT = "NEW UUID FOR THE EVENT";
 const AWS = require("aws-sdk");
 const kinesis = new AWS.Kinesis({ region: "eu-west-1" });
 
-const emitEvent = require("../src/event");
+const emitEvent = require("../../src/event");
 
 const promise = sinon.stub().resolves();
 

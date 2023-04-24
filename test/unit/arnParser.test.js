@@ -1,4 +1,4 @@
-const arnParser = require("../src/arnParser");
+const arnParser = require("../../src/arnParser");
 
 describe("#parse", () => {
   context("when receiving an invalide ARN", () => {
