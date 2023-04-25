@@ -15,11 +15,10 @@ module.exports = (config = {}) => {
     arnConfig
   );
 
-  const kinesis = instantiateKinesis(extendedConfig.kinesisStream);
-
   if (config.endpoint) {
-    kinesis.endpoint = config.endpoint;
+    extendedConfig.kinesisStream.endpoint = config.endpoint;
   }
+  const kinesis = instantiateKinesis(extendedConfig.kinesisStream);
 
   if (config.type && config.type === "BATCH") {
     return (events) => {

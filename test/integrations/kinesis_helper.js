@@ -42,7 +42,7 @@ const getShardIterator = async ({ ShardId, SequenceNumber }) => {
     StartingSequenceNumber: SequenceNumber,
   });
 
-  const { ShardIterator } = await kinesisClient.send(getShardIterator);
+  const { ShardIterator } = await kinesisClient.send(getShardIteratorCommand);
   return ShardIterator;
 };
 

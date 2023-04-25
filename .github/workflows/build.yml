@@ -25,14 +25,24 @@ jobs:
           cache: 'npm'
       - name: update npm to v8
         run: npm -g install npm@8
+      - name: Setup Kinesis
+        uses: zhulik/setup-kinesis@v1
       - name: Install dependencies and test
         run: npm ci
       - name: Linters
         run: npm run lint
       - name: Tests
         run: npm run test
+      - name: Prepare for integration tests
+        run: bash scripts/configure-aws-services.sh
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
       - name: Run integration tests to kinesis
-        run: npm run test
+        run: npm run test:integration
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
   release:
     needs: test
     if: contains(github.ref, 'tags') && github.event_name == 'create'

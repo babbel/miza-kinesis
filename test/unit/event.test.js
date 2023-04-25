@@ -54,7 +54,7 @@ describe("#emitEvent", () => {
 
       expect(kinesisStub).to.have.been.calledOnce;
       expect(putRecordsStub).to.have.been.calledWith({
-        Data: JSON.stringify(enrichedEvent),
+        Data: Buffer.from(JSON.stringify(enrichedEvent)),
         PartitionKey: EVENT_UUID_RESULT,
         StreamName: "test-stream",
       });
@@ -113,7 +113,7 @@ describe("#emitEvent", () => {
 
       emitEvent(kinesis, event, config);
       expect(putRecordsStub).to.have.been.calledWith({
-        Data: JSON.stringify(enrichedEvent),
+        Data: Buffer.from(JSON.stringify(enrichedEvent)),
         PartitionKey: "uuid",
         StreamName: "test-stream",
       });
@@ -133,7 +133,7 @@ describe("#emitEvent", () => {
 
       emitEvent(kinesis, event, config);
       expect(putRecordsStub).to.have.been.calledWith({
-        Data: JSON.stringify(enrichedEvent),
+        Data: Buffer.from(JSON.stringify(enrichedEvent)),
         PartitionKey: EVENT_UUID_RESULT,
         StreamName: "test-stream",
       });
