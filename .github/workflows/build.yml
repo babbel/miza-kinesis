@@ -25,6 +25,8 @@ jobs:
           cache: 'npm'
       - name: update npm to v8
         run: npm -g install npm@8
+      - name: Setup Kinesis
+        uses: zhulik/setup-kinesis@v1
       - name: Install dependencies and test
         run: npm ci
       - name: Linters
@@ -32,7 +34,7 @@ jobs:
       - name: Tests
         run: npm run test
       - name: Run integration tests to kinesis
-        run: npm run test
+        run: npm run test:integration
   release:
     needs: test
     if: contains(github.ref, 'tags') && github.event_name == 'create'
