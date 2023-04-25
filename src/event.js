@@ -3,9 +3,8 @@ const { PutRecordCommand } = require("@aws-sdk/client-kinesis");
 
 const emitEvent = (kinesis, event, config) => {
   const enrichedEvent = enrichMeta(event, config.appName, config.ipv4);
-
   const putRecordCommand = new PutRecordCommand({
-    Data: JSON.stringify(enrichedEvent),
+    Data: Buffer.from(JSON.stringify(enrichedEvent)),
     PartitionKey: config.partitionKey || partitionKey(enrichedEvent),
     StreamName: config.kinesisStream.resource,
   });
