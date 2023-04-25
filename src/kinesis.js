@@ -7,7 +7,8 @@ module.exports = ({ region, maxRetries, connectionTimeout, endpoint }) => {
     requestHandler: new NodeHttpHandler({ connectionTimeout }),
     maxRetries,
   };
-  if(endpoint) { kinesisConfig.endpoint = endpoint }
+  if (endpoint) {
+    kinesisConfig.endpoint = endpoint;
+  }
   return new KinesisClient(kinesisConfig);
-}
-  
+};

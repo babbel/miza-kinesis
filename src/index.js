@@ -14,7 +14,7 @@ module.exports = (config = {}) => {
     extendedConfig.kinesisStream,
     arnConfig
   );
-  
+
   if (config.endpoint) {
     extendedConfig.kinesisStream.endpoint = config.endpoint;
   }
