@@ -35,6 +35,9 @@ jobs:
         run: npm run test
       - name: Prepare for integration tests
         run: bash scripts/configure-aws-services.sh
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
       - name: Run integration tests to kinesis
         run: npm run test:integration
         env:
