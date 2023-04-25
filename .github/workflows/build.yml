@@ -33,6 +33,8 @@ jobs:
         run: npm run lint
       - name: Tests
         run: npm run test
+      - name: Prepare for integration tests
+        run: bash scripts/configure-aws-services.sh
       - name: Run integration tests to kinesis
         run: npm run test:integration
         env:
