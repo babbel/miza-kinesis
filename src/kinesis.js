@@ -12,7 +12,7 @@ module.exports = ({
     region,
     requestHandler: new NodeHttpHandler({
       connectionTimeout,
-      socketTimeout: timeout,
+      requestTimeout: timeout,
     }),
     maxRetries,
   };
