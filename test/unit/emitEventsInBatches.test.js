@@ -8,7 +8,7 @@ const putRecordsStub = sinon.spy();
 const { enrichMeta } = require("../../src/enrich");
 
 const emitEventsInBatches = proxyquire("../src/emitEventsInBatches", {
-  "@aws-sdk/client-kinesis": { PutRecordCommand: putRecordsStub },
+  "@aws-sdk/client-kinesis": { PutRecordsCommand: putRecordsStub },
 });
 
 const { expect } = require("chai");
@@ -49,7 +49,7 @@ describe("#emitEventsInBatches", () => {
       emitEventsInBatches(kinesis, events, config);
       expect(putRecordsStub).to.have.been.calledWith({
         Records: events.map((event) => ({
-          Data: JSON.stringify(enrichMeta(event, config.appName)),
+          Data: Buffer.from(JSON.stringify(enrichMeta(event, config.appName))),
           PartitionKey: EVENT_UUID_RESULT,
         })),
         StreamName: "test-stream",
@@ -80,7 +80,7 @@ describe("#emitEventsInBatches", () => {
       expect(putRecordsStub.args[0][0]).to.deep.equal({
         StreamName: "test-stream",
         Records: events.slice(0, 500).map((event) => ({
-          Data: JSON.stringify(enrichMeta(event, config.appName)),
+          Data: Buffer.from(JSON.stringify(enrichMeta(event, config.appName))),
           PartitionKey: EVENT_UUID_RESULT,
         })),
       });
@@ -88,7 +88,7 @@ describe("#emitEventsInBatches", () => {
       expect(putRecordsStub.args[1][0]).to.deep.equal({
         StreamName: "test-stream",
         Records: events.slice(500, 501).map((event) => ({
-          Data: JSON.stringify(enrichMeta(event, config.appName)),
+          Data: Buffer.from(JSON.stringify(enrichMeta(event, config.appName))),
           PartitionKey: EVENT_UUID_RESULT,
         })),
       });
@@ -181,7 +181,9 @@ describe("#emitEventsInBatches", () => {
         emitEventsInBatches(kinesis, events, configWithPartitionKey);
         expect(putRecordsStub).to.have.been.calledWith({
           Records: events.map((event) => ({
-            Data: JSON.stringify(enrichMeta(event, config.appName)),
+            Data: Buffer.from(
+              JSON.stringify(enrichMeta(event, config.appName))
+            ),
             PartitionKey: "uuid",
           })),
           StreamName: "test-stream",
