@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [4.0.3]
+
+### Fixed
+- Use [`PutRecords`](https://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecords.html) instead of `PutRecord` when emitting events in batches, and return the output of operation in the settled Promise results
+- Send batch payloads as `Buffer` similar to when emitting a single event
+- Update type declarations after configuration changes in 4.x
+
 ## [4.0.2]
 
 ### Fix
