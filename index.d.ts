@@ -1,5 +1,9 @@
 // Type definitions for miza-kinesis
 // Project: Babbel
+import {
+  PutRecordCommandOutput,
+  PutRecordsResultEntry,
+} from "@aws-sdk/client-kinesis";
 
 export = Events;
 
@@ -12,7 +16,8 @@ declare namespace Events {
       arn: string;
       region?: string;
       maxRetries?: number;
-      httpOptions?: AWS.HTTPOptions;
+      timeout?: number;
+      connectionTimeout?: number;
     };
     endpoint?: string;
     partitionKey?: string;
@@ -25,12 +30,10 @@ declare namespace Events {
     [key: string]: unknown; // dependent on the specific event schema
   }
 
-  type EmitEvent = (
-    event: EventSchema | EventSchema[]
-  ) => ReturnType<
-    AWS.Request<
-      AWS.Kinesis.Types.PutRecordOutput | AWS.Kinesis.Types.PutRecordsOutput,
-      AWS.AWSError
-    >["promise"]
+  type EmitEvent = <T extends EventSchema>(
+    event: T | T[]
+  ) => Promise<
+    | PutRecordCommandOutput
+    | PromiseSettledResult<Awaited<PutRecordsResultEntry[]>>[]
   >;
 }
