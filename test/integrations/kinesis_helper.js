@@ -4,7 +4,7 @@ const {
   GetRecordsCommand,
   KinesisClient,
 } = require("@aws-sdk/client-kinesis");
-const { NodeHttpHandler } = require("@aws-sdk/node-http-handler");
+const { NodeHttpHandler } = require("@smithy/node-http-handler");
 
 const streamARN = "arn:aws:kinesis:eu-west-1:000000000000:stream/kinesis-test";
 const localKinesisEndpoint = "http://localhost:4567";

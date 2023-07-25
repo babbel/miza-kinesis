@@ -16,8 +16,8 @@
     "build": "rm -rf node_modules && npm install --production"
   },
   "dependencies": {
-    "@aws-sdk/client-kinesis": "^3.312.0",
-    "@aws-sdk/node-http-handler": "^3.310.0",
+    "@aws-sdk/client-kinesis": "^3.370.0",
+    "@smithy/node-http-handler": "^1.1.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 const { KinesisClient } = require("@aws-sdk/client-kinesis");
-const { NodeHttpHandler } = require("@aws-sdk/node-http-handler");
+const { NodeHttpHandler } = require("@smithy/node-http-handler");
 
 const instantiateKinesis = require("../../src/kinesis");
 
