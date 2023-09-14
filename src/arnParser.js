@@ -1,4 +1,4 @@
-const ARN_VALIDATOR = /^arn:aws:kinesis:([a-z\-0-9]+):(\d+):stream\/(.+)$/;
+const ARN_VALIDATOR = /^arn:aws:kinesis:([a-z\-0-9]+):([a-zA-Z0-9:\/]+):stream\/(.+)$/;
 
 const parse = (arn) => {
   const match = arn.match(ARN_VALIDATOR);
