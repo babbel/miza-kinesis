@@ -4,7 +4,7 @@ Provides an interface to create tracking events which are sent to AWS Kinesis.
 
 ## Requirements
 
-- [Nodejs](https://nodejs.org/en/download/) >= 12 with NPM version >= 8
+- [Nodejs](https://nodejs.org/en/download/) >= 16 with NPM version >= 8
 
 ## Development
 
