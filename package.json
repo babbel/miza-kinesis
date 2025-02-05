@@ -1,12 +1,12 @@
 {
   "name": "@babbel/miza-kinesis",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "description": "Library to emit Events to Kinesis Events Queue",
   "main": "index.js",
   "types": "index.d.ts",
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": ">=18",
+    "npm": ">=10"
   },
   "scripts": {
     "lint": "eslint . --ignore-path .gitignore",
@@ -16,24 +16,24 @@
     "build": "rm -rf node_modules && npm install --production"
   },
   "dependencies": {
-    "@aws-sdk/client-kinesis": "^3.600.0",
-    "@smithy/node-http-handler": "^3.1.0",
+    "@aws-sdk/client-kinesis": "^3.741.0",
+    "@smithy/node-http-handler": "^4.0.2",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^5.58.0",
-    "chai": "^4.3.7",
-    "chai-exclude": "^2.1.0",
-    "eslint": "^8.38.0",
-    "eslint-config-prettier": "^8.8.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "chai": "^4.5.0",
+    "chai-exclude": "^2.1.1",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^4.2.1",
     "mocha": "^9.2.2",
     "nyc": "^15.1.0",
     "prettier": "2.8.7",
     "proxyquire": "^2.1.3",
-    "sinon": "^15.0.3",
+    "sinon": "^15.2.0",
     "sinon-chai": "^3.7.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.7.3"
   },
   "author": "Babbel GmbH",
   "repository": {
