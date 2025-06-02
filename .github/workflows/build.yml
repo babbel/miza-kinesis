@@ -45,7 +45,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: test
   release:
     needs: test
-    # if: contains(github.ref, 'tags') && github.event_name == 'create'
+    if: contains(github.ref, 'tags') && github.event_name == 'create'
     permissions:
       contents: write
       id-token: write
