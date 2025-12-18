@@ -60,11 +60,5 @@ jobs:
 
       - name: Build npm package
         run: npm run build
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ vars.AWS_REGION }}
-          role-to-assume: ${{ vars.AWS_IAM_ROLE_ARN }}
-          
       - name: Publish to npm
         run: npm publish --access public
