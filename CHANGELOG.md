@@ -24,10 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   | `maxRetries: 2` | 3 attempts | 3 attempts |
   | `maxRetries: 0` | 3 attempts | 1 attempt |
 
-  Review your value before upgrading. High values now mean a much longer
-  failure path (mind Lambda timeouts), and an explicit `0` now really does
-  disable retries. Leave it unset to keep the SDK default, which can also be
-  tuned with the `AWS_MAX_ATTEMPTS` environment variable.
+  Review your value before upgrading. On a stream that keeps failing,
+  `maxRetries: 10` now takes ~41s to exhaust its 11 attempts, which will
+  outlive a default Lambda timeout; an explicit `0` now really does disable
+  retries. Leave it unset to keep the SDK default, which can also be tuned
+  with `AWS_MAX_ATTEMPTS` or the shared config's `max_attempts`.
+
+  Because the option was inert for three years, no consumer's value has ever
+  been exercised. Both it and `maxAttempts` are now validated at construction:
+  numeric strings are coerced (so a `process.env` value still works instead of
+  concatenating into `"21"` attempts), and anything else throws.
+
+- The application-level `config.maxRetries` loop no longer recurses without
+  bound. Its base case tested `retries === 0`, which a negative or fractional
+  value never reaches — `maxRetries: 1.5` retried until the heap was exhausted.
 
 ### Added
 - `kinesisStream.maxAttempts` - set the SDK's retry budget in its own units
