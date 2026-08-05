@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- `kinesisStream.maxRetries` now reaches the Kinesis client again.
+
+  AWS SDK v2 took `maxRetries`; v3 renamed it to `maxAttempts` and ignores
+  unknown config keys. The v3 upgrade in 4.0.0 kept passing `maxRetries`, so
+  from 4.0.0 through 6.0.0 the option was **silently dead** and every consumer
+  ran on the SDK default of 3 attempts.
+
+  **This is a breaking behavioural change** — the option starts taking effect,
+  in both directions:
+
+  | Config | 4.0.0 - 6.0.0 | Now |
+  | --- | --- | --- |
+  | `maxRetries: 10` | 3 attempts | 11 attempts |
+  | `maxRetries: 2` | 3 attempts | 3 attempts |
+  | `maxRetries: 0` | 3 attempts | 1 attempt |
+
+  Review your value before upgrading. High values now mean a much longer
+  failure path (mind Lambda timeouts), and an explicit `0` now really does
+  disable retries. Leave it unset to keep the SDK default, which can also be
+  tuned with the `AWS_MAX_ATTEMPTS` environment variable.
+
+### Added
+- `kinesisStream.maxAttempts` - set the SDK's retry budget in its own units
+  (total tries). Takes precedence over `kinesisStream.maxRetries`.
+
+### Changed
+- `index.d.ts` now declares the top-level `maxRetries` option. It has always
+  been read by `emitEvent`/`emitEventsInBatches` and documented in the README,
+  but was missing from the types, so consumers following the type definitions
+  nested it under `kinesisStream` where the application-level retry loop never
+  saw it.
+- README: replaced the leftover SDK v2 `httpOptions`/`connectTimeout` config
+  examples with the `connectionTimeout`/`timeout` keys actually read, and
+  documented the two retry layers and how they differ.
+- `test/unit/kinesis.test.js` now asserts the resolved client config. It
+  previously deep-compared the client against one built from the same object,
+  so it passed for any key name — including one the SDK ignores, which is how
+  this bug survived the v3 upgrade.
+
 ## [6.0.0]
 
 ### Chore

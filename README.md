@@ -35,8 +35,9 @@ const config = {
   appName: 'application-name',
   kinesisStream: {
     arn: 'Kinesis arn',
-    connectTimeout: 1000,
-    maxRetries: 10,
+    connectionTimeout: 1000,
+    timeout: 5000,
+    maxRetries: 2,
   },
   ipv4: '127.0.0.1', // optional
   endpoint: 'http://localhost:4568', // localstack only
@@ -75,12 +76,11 @@ const config = {
   appName: 'application-name',
   kinesisStream: {
     arn: 'Kinesis arn',
-    httpOptions: {
-      connectTimeout: 1000,
-      timeout: 1000,
-    },
-    maxRetries: 10,
+    connectionTimeout: 1000,
+    timeout: 5000,
+    maxRetries: 2, // transport-level, by the AWS SDK
   },
+  maxRetries: 1, // application-level, retries partial PutRecords failures too
   ipv4: '127.0.0.1', // optional
   endpoint: 'http://localhost:4568', // localstack only
   type: 'BATCH',
@@ -122,9 +122,11 @@ Config has a following format:
 
 - `appName` - **required** added to the events meta data to give notice of it's origin
 - `kinesisStream.arn` - **required** Kinesis ARN where the events will be send
-- `kinesisStream.httpOptions` - _optional_ specified in AWS SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Kinesis.html
-- `kinesisStream.maxRetries` - **optional** the maximum amount of retries to attempt with a request. See AWS.Kinesis.maxRetries for more information.
-- `config.maxRetries` the maximum amount of retries to attempt for failed requests.
+- `kinesisStream.connectionTimeout` - _optional_ milliseconds to wait for a socket connection, passed to the SDK's request handler
+- `kinesisStream.timeout` - _optional_ milliseconds to wait for a response, passed to the SDK's request handler as `requestTimeout`
+- `kinesisStream.maxRetries` - _optional_ transport-level retries, performed by the AWS SDK with exponential backoff and jitter. Translated to the SDK's [`maxAttempts`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-smithy-middleware-retry/) as `maxRetries + 1`. When unset, the SDK's own default applies (3 attempts, overridable via the `AWS_MAX_ATTEMPTS` environment variable).
+- `kinesisStream.maxAttempts` - _optional_ total transport-level tries, in the SDK's own units. Takes precedence over `kinesisStream.maxRetries`.
+- `config.maxRetries` - _optional_ application-level retries of the whole emit, on top of the SDK's. These have **no backoff**, but unlike `kinesisStream.maxRetries` they also retry partial `PutRecords` failures, which the SDK cannot see. Defaults to 0.
 - `ipv4` - _optional_ ip of the machine that is sending the event
 - `endpoint` - **localstack-only** we recommend to run the service in development environment using Localstack. Kinesis (from Localstack) will respond at the location `http://localhost:4568`. In order to work with Kinesis, you need to provide the location(endpoint) to the AWS-sdk configuration.
 - `partitionKey` - **optional** the key used to group data by shard within a stream.

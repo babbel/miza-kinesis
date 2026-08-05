@@ -15,10 +15,22 @@ declare namespace Events {
     kinesisStream: {
       arn: string;
       region?: string;
+      /**
+       * Transport-level retries, handled by the AWS SDK with exponential
+       * backoff and jitter. Translated to `maxAttempts` (= maxRetries + 1).
+       */
       maxRetries?: number;
+      /** Total transport-level tries. Takes precedence over `maxRetries`. */
+      maxAttempts?: number;
       timeout?: number;
       connectionTimeout?: number;
     };
+    /**
+     * Application-level retries of the whole emit, on top of the SDK's. No
+     * backoff. Unlike `kinesisStream.maxRetries` this also retries partial
+     * `PutRecords` failures, which the SDK cannot see. Defaults to 0.
+     */
+    maxRetries?: number;
     endpoint?: string;
     partitionKey?: string;
     ipv4?: string;
