@@ -15,7 +15,9 @@ const emitEventWithRetry = async (kinesis, event, config, retries) => {
   try {
     return await emitEvent(kinesis, event, config);
   } catch (error) {
-    if (retries === 0) throw error;
+    // `<= 0`, not `=== 0`: a negative or fractional value would never hit the
+    // exact-zero base case and recursed until the heap gave out.
+    if (retries <= 0) throw error;
     return await emitEventWithRetry(kinesis, event, config, retries - 1);
   }
 };

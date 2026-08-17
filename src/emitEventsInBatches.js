@@ -39,7 +39,9 @@ const emitEvents = async (kinesis, records, config, retries) => {
         }
       });
 
-      if (retries === 0)
+      // `<= 0`, not `=== 0`: a negative or fractional value would never hit
+      // the exact-zero base case and recursed until the heap gave out.
+      if (retries <= 0)
         throw failedEvents.map((failed) => omit(failed, ["failedRecord"]));
 
       return await emitEvents(
@@ -52,7 +54,7 @@ const emitEvents = async (kinesis, records, config, retries) => {
 
     return Records;
   } catch (error) {
-    if (retries === 0) throw error;
+    if (retries <= 0) throw error;
     return await emitEvents(kinesis, records, config, retries - 1);
   }
 };

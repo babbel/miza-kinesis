@@ -16,7 +16,7 @@ const kinesisConfig = {
   arn: streamARN,
   region,
   endpoint: localKinesisEndpoint,
-  maxRetries: 3,
+  maxAttempts: 4, // SDK v3's option; `maxRetries` here was silently ignored
   requestHandler: new NodeHttpHandler({ connectionTimeout: 5000 }),
 };
 
